@@ -311,7 +311,7 @@ ${w.passive_desc_en || w.passive_description_en || w.passive_description || 'No 
             if (char) {
               var rarityClass = char.rarity === 'SSR' ? 'SSR' : 'SR';
               html += `
-                <a href="character-detail.html?id=${char.slug}" class="char-card-mini">
+               <a href="character.html?slug=${char.slug}" class="char-card-mini">
                   <img src="${char.image || ''}" alt="${char.name_en}">
                   <div class="char-card-name">${char.name_en}</div>
                   <div class="char-card-rarity ${rarityClass}">${char.rarity}</div>
