@@ -290,7 +290,12 @@
                 <div class="modal-stat-card"><div class="modal-stat-title">Attack</div><div class="modal-stat-value">${w.equipment_atk || '—'}</div></div>
               </div>
               <div class="modal-stat-card"><div class="modal-stat-title">Sub Stat</div><div class="modal-stat-value">${w.sub_stat_type || 'None'} (${w.sub_stat_value || '0'})</div></div>
-              <div class="modal-stat-card"><div class="modal-stat-title">Passive Ability</div><div class="modal-stat-value" style="font-size:14px; line-height:1.6; font-weight:400;">${w.passive_desc_en || 'No description available.'}</div></div>
+             <div class="modal-stat-card">
+<div class="modal-stat-title">Passive Ability</div>
+<div class="modal-stat-value" style="font-size:14px; line-height:1.6; font-weight:400;">
+${w.passive_desc_en || w.passive_description_en || w.passive_description || 'No description available.'}
+</div>
+</div>
             </div>
           </div>
           <div class="best-characters-section">
