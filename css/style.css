@@ -530,14 +530,9 @@ padding-top: 80px;
 }
 
 .weapon-icon{
-width:16px;
-height:16px;
+width:24px;
+height:24px;
 display:inline-block;
 vertical-align:middle;
-margin-right:4px;
-}
-
-.weapon-tag img{
-width:16px;
-height:16px;
+margin-right:8px;
 }
