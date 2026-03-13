@@ -178,5 +178,18 @@
   "wpn_recommended": "Recommended Characters",
   "wpn_passive": "Passive Ability",
   "wpn_no_char": "No character data linked yet.",
-  "wpn_compatible": "COMPATIBLE"
+  "wpn_compatible": "COMPATIBLE",
+
+  "nav_team_builder": "Team Builder",
+  "tb_title": "Team Builder",
+  "tb_subtitle": "Build \u2022 Strategize \u2022 Dominate",
+  "tb_community_builds": "Community Builds",
+  "tb_community_sub": "Load a pre-made team composition",
+  "tb_save_build": "Save Build",
+  "tb_copy_link": "Copy Link",
+  "tb_export_image": "Export Image",
+  "tb_clear_team": "Clear Team",
+  "tb_canvas_hint": "Drag characters from the right panel or load a community build",
+  "tb_team_composition": "Team Composition",
+  "tb_load_build": "Load Build"
 }
