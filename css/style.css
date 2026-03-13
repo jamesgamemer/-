@@ -528,3 +528,10 @@ padding-top: 80px;
   .skills { grid-template-columns: 1fr; }
   .character-card { width: 100%; max-width: 350px; }
 }
+
+.weapon-icon{
+width:16px;
+height:16px;
+margin-right:4px;
+vertical-align:middle;
+}
