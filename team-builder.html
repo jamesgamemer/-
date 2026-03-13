@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Builder - 7DS Origin</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/navbar-auth.css?v=20260308">
+  <link rel="stylesheet" href="css/team-builder.css?v=20260314">
+  <link rel="stylesheet" href="css/team-builder-canvas.css?v=20260314b">
+  <link rel="stylesheet" href="css/team-builder-builds.css?v=20260314">
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════
+       NAVBAR
+  ═══════════════════════════════════════════ -->
+  <nav class="navbar">
+    <a href="index.html" class="navbar-logo">7DS<span>Origin</span></a>
+
+    <div class="navbar-hamburger" id="navHam" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </div>
+
+    <ul class="navbar-links" id="navLinks">
+      <li><a href="index.html">&#127968; Home</a></li>
+      <li><a href="characters.html">&#9876; Characters</a></li>
+      <li><a href="weapons.html">&#128481; Weapons</a></li>
+      <li><a href="tierlist.html">&#127942; Tier List</a></li>
+      <li><a href="events.html">&#127881; Events</a></li>
+      <li><a href="guides.html">&#128218; Guides</a></li>
+      <li><a href="team-builder.html" class="active">&#9881; Team Builder</a></li>
+    </ul>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════
+       PAGE HEADER
+  ═══════════════════════════════════════════ -->
+  <section class="tb-page-header">
+    <div class="tb-page-header-title">TEAM BUILDER</div>
+    <div class="tb-page-header-sub">Build &bull; Strategize &bull; Dominate</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       ACTION BAR
+  ═══════════════════════════════════════════ -->
+  <div class="tb-action-bar">
+    <button class="tb-action-btn btn-primary" id="btnSaveBuild">
+      &#128190; Save Build
+    </button>
+    <button class="tb-action-btn" id="btnCopyLink">
+      &#128279; Copy Link
+    </button>
+    <button class="tb-action-btn" id="btnExportImage">
+      &#128247; Export Image
+    </button>
+    <button class="tb-action-btn btn-danger" id="btnClearTeam">
+      &#128465; Clear Team
+    </button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       THREE-PANEL LAYOUT
+  ═══════════════════════════════════════════ -->
+  <div class="tb-layout">
+
+    <!-- ─────────────────────────────────────────
+         LEFT PANEL: Community Builds
+    ───────────────────────────────────────── -->
+    <aside class="tb-left-panel">
+      <div class="tb-panel-header">
+        <div class="tb-panel-title">
+          <span class="tb-panel-title-icon">&#128101;</span>
+          Community Builds
+        </div>
+        <div class="tb-panel-subtitle">Load a pre-made team composition</div>
+      </div>
+
+      <div class="tb-builds-list" id="communityBuildsList">
+
+        <!-- Build Card 1: Meta Shield Team -->
+        <div class="tb-build-card" data-build="meta-shield">
+          <div class="tb-build-card-name">Meta Shield Team</div>
+          <div class="tb-build-card-desc">Tanky frontline with shield synergy and healing support.</div>
+          <div class="tb-build-card-chars">
+            <img src="images/Daisy.png" alt="Daisy" class="tb-build-char-thumb" title="Daisy">
+            <img src="images/King.png" alt="King" class="tb-build-char-thumb" title="King">
+            <img src="images/Elizabeth.png" alt="Elizabeth" class="tb-build-char-thumb" title="Elizabeth">
+            <img src="images/Griamore.png" alt="Griamore" class="tb-build-char-thumb" title="Griamore">
+          </div>
+          <div class="tb-build-card-footer">
+            <span class="tb-build-tag tag-meta">META</span>
+            <button class="tb-load-btn">Load Build</button>
+          </div>
+        </div>
+
+        <!-- Build Card 2: Magic Burst Team -->
+        <div class="tb-build-card" data-build="magic-burst">
+          <div class="tb-build-card-name">Magic Burst Team</div>
+          <div class="tb-build-card-desc">High magic damage output with MP regen synergy.</div>
+          <div class="tb-build-card-chars">
+            <img src="images/Merlin.png" alt="Merlin" class="tb-build-char-thumb" title="Merlin">
+            <img src="images/Gowther.png" alt="Gowther" class="tb-build-char-thumb" title="Gowther">
+            <img src="images/Elaine.png" alt="Elaine" class="tb-build-char-thumb" title="Elaine">
+            <img src="images/Daisy.png" alt="Daisy" class="tb-build-char-thumb" title="Daisy">
+          </div>
+          <div class="tb-build-card-footer">
+            <span class="tb-build-tag tag-magic">MAGIC</span>
+            <button class="tb-load-btn">Load Build</button>
+          </div>
+        </div>
+
+        <!-- Build Card 3: Tank Control Team -->
+        <div class="tb-build-card" data-build="tank-control">
+          <div class="tb-build-card-name">Tank Control Team</div>
+          <div class="tb-build-card-desc">Maximum survivability with crowd control and debuffs.</div>
+          <div class="tb-build-card-chars">
+            <img src="images/Diane.png" alt="Diane" class="tb-build-char-thumb" title="Diane">
+            <img src="images/Hendrickson.png" alt="Hendrickson" class="tb-build-char-thumb" title="Hendrickson">
+            <img src="images/Gilthunder.png" alt="Gilthunder" class="tb-build-char-thumb" title="Gilthunder">
+            <img src="images/King.png" alt="King" class="tb-build-char-thumb" title="King">
+          </div>
+          <div class="tb-build-card-footer">
+            <span class="tb-build-tag tag-tank">TANK</span>
+            <button class="tb-load-btn">Load Build</button>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- ─────────────────────────────────────────
+         CENTER PANEL: Team Builder Canvas
+    ───────────────────────────────────────── -->
+    <main class="tb-center-panel">
+      <div class="tb-canvas-area" id="teamCanvas">
+        <!-- React Flow mounts here -->
+        <div id="reactFlowCanvas"></div>
+
+        <!-- Empty state placeholder (hidden when nodes exist) -->
+        <div class="tb-canvas-empty" id="canvasEmpty">
+          <div class="tb-canvas-empty-icon">&#9881;</div>
+          <div class="tb-canvas-empty-text">Team Builder Canvas</div>
+          <div class="tb-canvas-empty-hint">Drag a character from the right panel or click to add them</div>
+        </div>
+      </div>
+
+      <!-- Canvas Status Bar -->
+      <div class="tb-canvas-status">
+        <div class="tb-canvas-status-left">
+          <div class="tb-canvas-status-item">
+            <span class="tb-canvas-status-dot"></span>
+            <span>Ready</span>
+          </div>
+          <div class="tb-canvas-status-item">
+            <span>Nodes: <strong id="nodeCount">0</strong></span>
+          </div>
+          <div class="tb-canvas-status-item">
+            <span>Connections: <strong id="connectionCount">0</strong></span>
+          </div>
+        </div>
+        <div class="tb-zoom-controls">
+          <button class="tb-zoom-btn" id="btnZoomOut" title="Zoom Out">&minus;</button>
+          <span class="tb-zoom-level" id="zoomLevel">100%</span>
+          <button class="tb-zoom-btn" id="btnZoomIn" title="Zoom In">+</button>
+          <button class="tb-zoom-btn" id="btnZoomFit" title="Fit to View">&#9634;</button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════
+           SYNERGY PANEL (below canvas)
+      ═══════════════════════════════════════════ -->
+      <div class="tb-synergy-panel" id="synergyPanel">
+        <div class="tb-synergy-header">
+          <div class="tb-synergy-title">&#9733; DETECTED SYNERGIES</div>
+          <div class="tb-synergy-legend">
+            <span class="tb-synergy-legend-item" style="--syn-color:#22c55e;">&#9679; Buff</span>
+            <span class="tb-synergy-legend-item" style="--syn-color:#3b82f6;">&#9679; Magic</span>
+            <span class="tb-synergy-legend-item" style="--syn-color:#ef4444;">&#9679; Damage</span>
+            <span class="tb-synergy-legend-item" style="--syn-color:#f0c040;">&#9679; Combo</span>
+          </div>
+        </div>
+        <div class="tb-synergy-empty" id="synergyEmpty">
+          Connect characters on the canvas to detect synergies
+        </div>
+        <div class="tb-synergy-content" id="synergyContent">
+          <!-- Edge synergies -->
+          <div class="tb-synergy-section" id="synergyEdges" style="display:none;">
+            <div class="tb-synergy-section-title">Connection Synergies</div>
+            <div class="tb-synergy-list" id="synergyEdgeList"></div>
+          </div>
+          <!-- Team synergies -->
+          <div class="tb-synergy-section" id="synergyTeam" style="display:none;">
+            <div class="tb-synergy-section-title">Team Synergies</div>
+            <div class="tb-synergy-list" id="synergyTeamList"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ─────────────────────────────────────────
+         RIGHT PANEL: Character & Weapon Selector
+    ───────────────────────────────────────── -->
+    <aside class="tb-right-panel">
+
+      <!-- Tabs: Characters / Weapons -->
+      <div class="tb-selector-tabs">
+        <button class="tb-selector-tab active" data-tab="characters" id="tabCharacters">
+          &#9876; Characters
+        </button>
+        <button class="tb-selector-tab" data-tab="weapons" id="tabWeapons">
+          &#128481; Weapons
+        </button>
+      </div>
+
+      <!-- Search & Filters -->
+      <div class="tb-selector-toolbar">
+        <input type="text" class="tb-selector-search" id="selectorSearch" placeholder="Search characters by name...">
+        <!-- Rarity filter row -->
+        <div class="tb-filter-row">
+          <span class="tb-filter-label">Rarity</span>
+          <div class="tb-selector-filters" id="selectorFilters">
+            <button class="tb-filter-chip active" data-filter="all">All</button>
+            <button class="tb-filter-chip" data-filter="SSR">SSR</button>
+            <button class="tb-filter-chip" data-filter="SR">SR</button>
+          </div>
+        </div>
+        <!-- Weapon type filter row (characters tab only) -->
+        <div class="tb-filter-row" id="weaponTypeFilterRow">
+          <span class="tb-filter-label">Weapon</span>
+          <div class="tb-selector-filters tb-weapon-type-filters" id="weaponTypeFilters">
+            <button class="tb-filter-chip active" data-wtype="all">All</button>
+            <button class="tb-filter-chip" data-wtype="Axe">Axe</button>
+            <button class="tb-filter-chip" data-wtype="Book">Book</button>
+            <button class="tb-filter-chip" data-wtype="Cudgel">Cudgel</button>
+            <button class="tb-filter-chip" data-wtype="Dual Swords">D.Swords</button>
+            <button class="tb-filter-chip" data-wtype="Gauntlets">Gauntlets</button>
+            <button class="tb-filter-chip" data-wtype="Greatsword">G.Sword</button>
+            <button class="tb-filter-chip" data-wtype="Lance">Lance</button>
+            <button class="tb-filter-chip" data-wtype="Longsword">L.Sword</button>
+            <button class="tb-filter-chip" data-wtype="Rapier">Rapier</button>
+            <button class="tb-filter-chip" data-wtype="Shield">Shield</button>
+            <button class="tb-filter-chip" data-wtype="Staff">Staff</button>
+            <button class="tb-filter-chip" data-wtype="Wand">Wand</button>
+          </div>
+        </div>
+        <div class="tb-drag-hint" id="dragHint">Drag a character to the canvas to add them</div>
+      </div>
+
+      <!-- Selector Content -->
+      <div class="tb-selector-content">
+
+        <!-- Character List -->
+        <div class="tb-selector-list" id="characterSelectorList">
+          <div style="grid-column: 1/-1; text-align:center; color: var(--muted); padding: 40px 10px; font-size: 13px;">
+            Loading characters...
+          </div>
+        </div>
+
+        <!-- Weapon List (hidden by default) -->
+        <div class="tb-selector-list hidden" id="weaponSelectorList">
+          <div style="grid-column: 1/-1; text-align:center; color: var(--muted); padding: 40px 10px; font-size: 13px;">
+            Loading weapons...
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Role Balance Indicator -->
+      <div class="tb-role-balance">
+        <div class="tb-role-balance-title">Team Composition</div>
+        <div class="tb-role-balance-bars">
+          <div class="tb-role-bar">
+            <span class="tb-role-bar-label">Tank</span>
+            <div class="tb-role-bar-track">
+              <div class="tb-role-bar-fill tank" style="width: 0%;"></div>
+            </div>
+            <span class="tb-role-bar-count">0</span>
+          </div>
+          <div class="tb-role-bar">
+            <span class="tb-role-bar-label">DPS</span>
+            <div class="tb-role-bar-track">
+              <div class="tb-role-bar-fill dps" style="width: 0%;"></div>
+            </div>
+            <span class="tb-role-bar-count">0</span>
+          </div>
+          <div class="tb-role-bar">
+            <span class="tb-role-bar-label">Support</span>
+            <div class="tb-role-bar-track">
+              <div class="tb-role-bar-fill support" style="width: 0%;"></div>
+            </div>
+            <span class="tb-role-bar-count">0</span>
+          </div>
+          <div class="tb-role-bar">
+            <span class="tb-role-bar-label">Debuff</span>
+            <div class="tb-role-bar-track">
+              <div class="tb-role-bar-fill debuff" style="width: 0%;"></div>
+            </div>
+            <span class="tb-role-bar-count">0</span>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       WEAPON PICKER MODAL
+  ═══════════════════════════════════════════ -->
+  <div class="wpicker-overlay" id="weaponPickerModal">
+    <div class="wpicker-modal">
+      <div class="wpicker-header">
+        <div class="wpicker-title">SELECT WEAPON</div>
+        <button class="wpicker-close" id="weaponPickerClose">&times;</button>
+      </div>
+      <div class="wpicker-search-wrap">
+        <input type="text" class="wpicker-search" id="weaponPickerSearch" placeholder="Search weapons...">
+      </div>
+      <div class="wpicker-list" id="weaponPickerList">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <p data-i18n="footer_text">7DS Origin Database &mdash; Fan-made site &mdash; Not affiliated with Netmarble</p>
+    <p style="margin-top:8px;">
+      <a href="index.html" data-i18n="nav_home">Home</a> &nbsp;&bull;&nbsp;
+      <a href="characters.html" data-i18n="nav_characters">Characters</a> &nbsp;&bull;&nbsp;
+      <a href="weapons.html" data-i18n="nav_weapons">Weapons</a> &nbsp;&bull;&nbsp;
+      <a href="tierlist.html" data-i18n="nav_tierlist">Tier List</a> &nbsp;&bull;&nbsp;
+      <a href="events.html" data-i18n="nav_events">Events</a> &nbsp;&bull;&nbsp;
+      <a href="guides.html" data-i18n="nav_guides">Guides</a> &nbsp;&bull;&nbsp;
+      <a href="team-builder.html">Team Builder</a>
+    </p>
+  </footer>
+
+  <!-- ═══════════════════════════════════════════
+       SCRIPTS
+  ═══════════════════════════════════════════ -->
+  <!-- Existing data modules -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/supabase-weapon-api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/navbar.js?v=20260308"></script>
+
+  <!-- Self-contained React Flow Canvas Bundle (includes React + ReactFlow + custom nodes) -->
+  <script src="js/team-builder-canvas.js?v=20260314b"></script>
+
+  <!-- html2canvas for Export Image -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+  <!-- Build System: Save, Copy Link, Export Image, Clear Team -->
+  <script src="js/team-builder-builds.js?v=20260314"></script>
+
+  <!-- Page-level init (selectors, tabs, filters, drag-to-canvas, canvas integration) -->
+  <script>
+  (function () {
+    'use strict';
+
+    /* ── i18n init ── */
+    if (typeof I18n !== 'undefined') {
+      I18n.init();
+      I18n.applyTranslations();
+    }
+
+    /* ══════════════════════════════════════════════
+       DOM REFERENCES
+    ══════════════════════════════════════════════ */
+    var tabChars = document.getElementById('tabCharacters');
+    var tabWeapons = document.getElementById('tabWeapons');
+    var listChars = document.getElementById('characterSelectorList');
+    var listWeapons = document.getElementById('weaponSelectorList');
+    var searchInput = document.getElementById('selectorSearch');
+    var filtersContainer = document.getElementById('selectorFilters');
+    var weaponTypeFilterRow = document.getElementById('weaponTypeFilterRow');
+    var weaponTypeFilters = document.getElementById('weaponTypeFilters');
+    var dragHint = document.getElementById('dragHint');
+    var canvasArea = document.getElementById('teamCanvas');
+
+    /* ══════════════════════════════════════════════
+       STATE
+    ══════════════════════════════════════════════ */
+    var _allCharsData = [];
+    var _allWeaponsData = [];
+    var _currentTab = 'characters';
+    var _currentRarityFilter = 'all';
+    var _currentWeaponTypeFilter = 'all';
+
+    /* ══════════════════════════════════════════════
+       TAB SWITCHING
+    ══════════════════════════════════════════════ */
+    function switchTab(tab) {
+      _currentTab = tab;
+      _currentRarityFilter = 'all';
+      _currentWeaponTypeFilter = 'all';
+      searchInput.value = '';
+
+      if (tab === 'characters') {
+        tabChars.classList.add('active');
+        tabWeapons.classList.remove('active');
+        listChars.classList.remove('hidden');
+        listWeapons.classList.add('hidden');
+        searchInput.placeholder = 'Search characters by name...';
+        weaponTypeFilterRow.style.display = '';
+        dragHint.textContent = 'Drag a character to the canvas to add them';
+        dragHint.style.display = '';
+        renderCharacterRarityFilters();
+        resetWeaponTypeChips();
+      } else {
+        tabChars.classList.remove('active');
+        tabWeapons.classList.add('active');
+        listChars.classList.add('hidden');
+        listWeapons.classList.remove('hidden');
+        searchInput.placeholder = 'Search weapons by name...';
+        weaponTypeFilterRow.style.display = 'none';
+        /* Switch weapon list to 1-column layout for side-by-side cards */
+        listWeapons.style.gridTemplateColumns = '1fr';
+        dragHint.textContent = 'Drag a weapon onto a character\'s weapon slot';
+        dragHint.style.display = '';
+        renderWeaponRarityFilters();
+      }
+      applyFilters();
+    }
+
+    tabChars.addEventListener('click', function () { switchTab('characters'); });
+    tabWeapons.addEventListener('click', function () { switchTab('weapons'); });
+
+    /* ══════════════════════════════════════════════
+       RARITY FILTER CHIPS
+    ══════════════════════════════════════════════ */
+    function renderCharacterRarityFilters() {
+      filtersContainer.innerHTML =
+        '<button class="tb-filter-chip active" data-filter="all">All</button>' +
+        '<button class="tb-filter-chip" data-filter="SSR">SSR</button>' +
+        '<button class="tb-filter-chip" data-filter="SR">SR</button>';
+      bindRarityFilterClicks();
+    }
+
+    function renderWeaponRarityFilters() {
+      filtersContainer.innerHTML =
+        '<button class="tb-filter-chip active" data-filter="all">All</button>' +
+        '<button class="tb-filter-chip" data-filter="5">5&#9733;</button>' +
+        '<button class="tb-filter-chip" data-filter="4">4&#9733;</button>';
+      bindRarityFilterClicks();
+    }
+
+    function bindRarityFilterClicks() {
+      filtersContainer.querySelectorAll('.tb-filter-chip').forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          filtersContainer.querySelectorAll('.tb-filter-chip').forEach(function (c) {
+            c.classList.remove('active');
+          });
+          chip.classList.add('active');
+          _currentRarityFilter = chip.getAttribute('data-filter');
+          applyFilters();
+        });
+      });
+    }
+
+    /* ══════════════════════════════════════════════
+       WEAPON TYPE FILTER CHIPS
+    ══════════════════════════════════════════════ */
+    function resetWeaponTypeChips() {
+      _currentWeaponTypeFilter = 'all';
+      weaponTypeFilters.querySelectorAll('.tb-filter-chip').forEach(function (c) {
+        c.classList.remove('active');
+      });
+      weaponTypeFilters.querySelector('[data-wtype="all"]').classList.add('active');
+    }
+
+    weaponTypeFilters.querySelectorAll('.tb-filter-chip').forEach(function (chip) {
+      chip.addEventListener('click', function () {
+        weaponTypeFilters.querySelectorAll('.tb-filter-chip').forEach(function (c) {
+          c.classList.remove('active');
+        });
+        chip.classList.add('active');
+        _currentWeaponTypeFilter = chip.getAttribute('data-wtype');
+        applyFilters();
+      });
+    });
+
+    /* ══════════════════════════════════════════════
+       SEARCH
+    ══════════════════════════════════════════════ */
+    searchInput.addEventListener('input', function () {
+      applyFilters();
+    });
+
+    /* ══════════════════════════════════════════════
+       APPLY FILTERS (combined: search + rarity + weapon type)
+    ══════════════════════════════════════════════ */
+    function applyFilters() {
+      var query = (searchInput.value || '').toLowerCase().trim();
+
+      if (_currentTab === 'characters') {
+        var filtered = _allCharsData.filter(function (c) {
+          var name = (c.name_en || c.name || '').toLowerCase();
+          var matchName = !query || name.indexOf(query) !== -1;
+          var matchRarity = _currentRarityFilter === 'all' || (c.rarity || 'SR') === _currentRarityFilter;
+          var matchWeaponType = true;
+          if (_currentWeaponTypeFilter !== 'all') {
+            var types = c.types || [];
+            matchWeaponType = types.indexOf(_currentWeaponTypeFilter) !== -1;
+          }
+          return matchName && matchRarity && matchWeaponType;
+        });
+        renderCharacterList(filtered);
+      } else {
+        var filtered2 = _allWeaponsData.filter(function (w) {
+          var name = (w.name_en || w.name || '').toLowerCase();
+          var matchName = !query || name.indexOf(query) !== -1;
+          var matchRarity = _currentRarityFilter === 'all';
+          return matchName && matchRarity;
+        });
+        renderWeaponList(filtered2);
+      }
+    }
+
+    /* ══════════════════════════════════════════════
+       RENDER CHARACTER LIST (with drag support)
+    ══════════════════════════════════════════════ */
+    function renderCharacterList(characters) {
+      if (!characters || characters.length === 0) {
+        listChars.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:40px 10px;font-size:13px;">No characters found</div>';
+        return;
+      }
+
+      var html = '';
+      characters.forEach(function (c) {
+        var name = c.name_en || c.name || 'Unknown';
+        var img = c.image || 'https://placehold.co/200x200/111827/666?text=' + encodeURIComponent(name.charAt(0));
+        var rarity = c.rarity || 'SR';
+        var rarityClass = rarity === 'SSR' ? 'ssr' : 'sr';
+        var types = (c.types || []).join(', ');
+
+        html +=
+          '<div class="tb-char-select-card" draggable="true" ' +
+            'data-char-id="' + (c.id || c.slug || '') + '" ' +
+            'data-char-name="' + name + '" ' +
+            'title="' + name + ' (' + types + ')">' +
+            '<img src="' + img + '" alt="' + name + '" loading="lazy" draggable="false">' +
+            '<div class="tb-char-select-info">' +
+              '<div class="tb-char-select-name">' + name + '</div>' +
+              '<div class="tb-char-select-rarity ' + rarityClass + '">' + rarity + '</div>' +
+            '</div>' +
+            '<div class="tb-char-select-types">' + types + '</div>' +
+          '</div>';
+      });
+
+      listChars.innerHTML = html;
+
+      /* ── Bind click + drag events ── */
+      listChars.querySelectorAll('.tb-char-select-card').forEach(function (card) {
+        var charId = card.getAttribute('data-char-id');
+
+        /* Click to add */
+        card.addEventListener('click', function (e) {
+          /* Don't add on click if it was a drag */
+          if (card._wasDragged) { card._wasDragged = false; return; }
+          var charObj = findCharById(charId);
+          if (charObj && window.__TB_addCharacterNode) {
+            window.__TB_addCharacterNode(charObj);
+            flashCard(card);
+          }
+        });
+
+        /* Drag start */
+        card.addEventListener('dragstart', function (e) {
+          card.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'copy';
+          e.dataTransfer.setData('text/plain', charId);
+          e.dataTransfer.setData('application/x-tb-char', charId);
+
+          /* Custom drag image */
+          var ghost = card.cloneNode(true);
+          ghost.style.width = '120px';
+          ghost.style.opacity = '0.85';
+          ghost.style.position = 'absolute';
+          ghost.style.top = '-9999px';
+          ghost.style.pointerEvents = 'none';
+          document.body.appendChild(ghost);
+          e.dataTransfer.setDragImage(ghost, 60, 40);
+          setTimeout(function () { document.body.removeChild(ghost); }, 0);
+        });
+
+        card.addEventListener('dragend', function () {
+          card.classList.remove('dragging');
+          card._wasDragged = true;
+          setTimeout(function () { card._wasDragged = false; }, 100);
+        });
+      });
+    }
+
+    /* ── Canvas drop zone ── */
+    canvasArea.addEventListener('dragover', function (e) {
+      if (e.dataTransfer.types.indexOf('application/x-tb-char') !== -1 ||
+          e.dataTransfer.types.indexOf('text/plain') !== -1) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy';
+        canvasArea.classList.add('drop-active');
+      }
+    });
+
+    canvasArea.addEventListener('dragleave', function (e) {
+      /* Only remove if leaving the canvas area entirely */
+      if (!canvasArea.contains(e.relatedTarget)) {
+        canvasArea.classList.remove('drop-active');
+      }
+    });
+
+    canvasArea.addEventListener('drop', function (e) {
+      e.preventDefault();
+      canvasArea.classList.remove('drop-active');
+
+      var charId = e.dataTransfer.getData('application/x-tb-char') || e.dataTransfer.getData('text/plain');
+      if (!charId) return;
+
+      var charObj = findCharById(charId);
+      if (!charObj || !window.__TB_addCharacterNode) return;
+
+      /* Calculate drop position relative to canvas viewport */
+      var rect = canvasArea.getBoundingClientRect();
+      var dropX = e.clientX - rect.left;
+      var dropY = e.clientY - rect.top;
+
+      /* Convert screen coords to flow coords using React Flow viewport */
+      var flowPos = { x: dropX, y: dropY };
+      if (window.__TB_rfInstance) {
+        try {
+          var vp = window.__TB_rfInstance.getViewport();
+          flowPos.x = (dropX - vp.x) / vp.zoom;
+          flowPos.y = (dropY - vp.y) / vp.zoom;
+        } catch (err) {}
+      }
+
+      window.__TB_addCharacterNodeAt(charObj, flowPos.x, flowPos.y);
+    });
+
+    /* ── Helper: find character by ID ── */
+    function findCharById(charId) {
+      return _allCharsData.find(function (c) {
+        return (c.id || c.slug || '') == charId;
+      });
+    }
+
+    /* ── Helper: flash card feedback ── */
+    function flashCard(card) {
+      card.style.transform = 'scale(0.92)';
+      card.style.opacity = '0.6';
+      setTimeout(function () {
+        card.style.transform = '';
+        card.style.opacity = '';
+      }, 200);
+    }
+
+    /* ══════════════════════════════════════════════
+       RENDER WEAPON LIST (with drag support)
+    ══════════════════════════════════════════════ */
+    function renderWeaponList(weapons) {
+      if (!weapons || weapons.length === 0) {
+        listWeapons.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:40px 10px;font-size:13px;">No weapons found</div>';
+        return;
+      }
+
+      var html = '';
+      weapons.forEach(function (w) {
+        var name = w.name_en || w.name || 'Unknown';
+        var icon = w.icon_url || 'https://placehold.co/80x80/111827/666?text=?';
+        var cat = w.category || '';
+        var atk = w.equipment_atk || 0;
+        var role = w.role || '';
+        var subStat = w.sub_stat_type || '';
+        var subVal = w.sub_stat_value || '';
+        var passive = (w.passive_description || '').substring(0, 60);
+        if ((w.passive_description || '').length > 60) passive += '...';
+
+        html +=
+          '<div class="tb-weapon-select-card" draggable="true" ' +
+            'data-weapon-id="' + (w.id || w.slug || '') + '" ' +
+            'data-weapon-name="' + name + '" ' +
+            'title="' + name + '\n' + cat + ' \u2022 ATK ' + atk + '\n' + (w.passive_description || '') + '">' +
+            '<img src="' + icon + '" alt="' + name + '" loading="lazy" draggable="false">' +
+            '<div class="tb-weapon-select-info">' +
+              '<div class="tb-weapon-select-name">' + name + '</div>' +
+              '<div class="tb-weapon-select-cat">' + cat + '</div>' +
+              '<div class="tb-weapon-select-stats">' +
+                '<span class="tb-weapon-stat-atk">ATK ' + atk + '</span>' +
+                (subStat && subStat !== 'Unknown' ? ' <span class="tb-weapon-stat-sub">' + subStat + ' ' + subVal + '</span>' : '') +
+              '</div>' +
+              (role ? '<div class="tb-weapon-select-role">' + role + '</div>' : '') +
+              (passive ? '<div class="tb-weapon-select-passive">' + passive + '</div>' : '') +
+            '</div>' +
+          '</div>';
+      });
+
+      listWeapons.innerHTML = html;
+
+      /* ── Bind drag events for weapon cards ── */
+      listWeapons.querySelectorAll('.tb-weapon-select-card').forEach(function (card) {
+        card.addEventListener('dragstart', function (e) {
+          var weaponId = card.getAttribute('data-weapon-id');
+          card.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'copy';
+          e.dataTransfer.setData('text/plain', weaponId);
+          e.dataTransfer.setData('application/x-tb-weapon', weaponId);
+
+          var ghost = card.cloneNode(true);
+          ghost.style.width = '100px';
+          ghost.style.opacity = '0.85';
+          ghost.style.position = 'absolute';
+          ghost.style.top = '-9999px';
+          ghost.style.pointerEvents = 'none';
+          document.body.appendChild(ghost);
+          e.dataTransfer.setDragImage(ghost, 50, 30);
+          setTimeout(function () { document.body.removeChild(ghost); }, 0);
+        });
+
+        card.addEventListener('dragend', function () {
+          card.classList.remove('dragging');
+        });
+      });
+    }
+
+    /* ══════════════════════════════════════════════
+       RESOLVE WEAPON BY ID AND ASSIGN (bridge for drag-drop)
+    ══════════════════════════════════════════════ */
+    window.__TB_resolveWeaponAndAssign = function (nodeId, slotIdx, weaponId) {
+      var wObj = _allWeaponsData.find(function (w) {
+        return (w.id || w.slug || '') == weaponId;
+      });
+      if (wObj && window.__TB_assignWeapon) {
+        window.__TB_assignWeapon(nodeId, slotIdx, wObj);
+      }
+    };
+
+    /* ══════════════════════════════════════════════
+       WEAPON PICKER MODAL (for node weapon slots)
+    ══════════════════════════════════════════════ */
+    var wpModal = document.getElementById('weaponPickerModal');
+    var wpClose = document.getElementById('weaponPickerClose');
+    var wpSearch = document.getElementById('weaponPickerSearch');
+    var wpList = document.getElementById('weaponPickerList');
+    var _wpTargetNodeId = null;
+    var _wpTargetSlotIdx = null;
+
+    window.__TB_openWeaponPicker = function (nodeId, slotIdx) {
+      _wpTargetNodeId = nodeId;
+      _wpTargetSlotIdx = slotIdx;
+      wpSearch.value = '';
+      renderWeaponPickerList(_allWeaponsData);
+      wpModal.classList.add('active');
+      setTimeout(function () { wpSearch.focus(); }, 100);
+    };
+
+    function closeWeaponPicker() {
+      wpModal.classList.remove('active');
+      _wpTargetNodeId = null;
+      _wpTargetSlotIdx = null;
+    }
+    wpClose.addEventListener('click', closeWeaponPicker);
+    wpModal.addEventListener('click', function (e) {
+      if (e.target === wpModal) closeWeaponPicker();
+    });
+
+    wpSearch.addEventListener('input', function () {
+      var q = (wpSearch.value || '').toLowerCase();
+      var filtered = _allWeaponsData.filter(function (w) {
+        var name = (w.name_en || w.name || '').toLowerCase();
+        return !q || name.indexOf(q) !== -1;
+      });
+      renderWeaponPickerList(filtered);
+    });
+
+    function renderWeaponPickerList(weapons) {
+      if (!weapons || weapons.length === 0) {
+        wpList.innerHTML = '<div style="text-align:center;color:#94a3b8;padding:30px;">No weapons found</div>';
+        return;
+      }
+      var html = '';
+      weapons.forEach(function (w) {
+        var name = w.name_en || w.name || 'Unknown';
+        var icon = w.icon_url || '';
+        var cat = w.category || '';
+        var atk = w.equipment_atk || 0;
+        var role = w.role || '';
+        var subStat = w.sub_stat_type || '';
+        var subVal = w.sub_stat_value || '';
+        var passive = (w.passive_description || '').substring(0, 80);
+        if ((w.passive_description || '').length > 80) passive += '...';
+
+        html +=
+          '<div class="wpicker-item" data-weapon-id="' + (w.id || w.slug || '') + '">' +
+            '<div class="wpicker-item-icon">' +
+              (icon ? '<img src="' + icon + '" alt="' + name + '">' : '<span>?</span>') +
+            '</div>' +
+            '<div class="wpicker-item-info">' +
+              '<div class="wpicker-item-name">' + name + '</div>' +
+              '<div class="wpicker-item-meta">' + cat + ' &bull; ATK ' + atk +
+                (role ? ' &bull; ' + role : '') +
+                (subStat && subStat !== 'Unknown' ? ' &bull; ' + subStat + ' ' + subVal : '') +
+              '</div>' +
+              (passive ? '<div class="wpicker-item-passive">' + passive + '</div>' : '') +
+            '</div>' +
+          '</div>';
+      });
+      wpList.innerHTML = html;
+
+      wpList.querySelectorAll('.wpicker-item').forEach(function (item) {
+        item.addEventListener('click', function () {
+          var wid = item.getAttribute('data-weapon-id');
+          var wObj = _allWeaponsData.find(function (w) { return (w.id || w.slug || '') == wid; });
+          if (wObj && _wpTargetNodeId !== null && window.__TB_assignWeapon) {
+            window.__TB_assignWeapon(_wpTargetNodeId, _wpTargetSlotIdx, wObj);
+          }
+          closeWeaponPicker();
+        });
+      });
+    }
+
+    /* ══════════════════════════════════════════════
+       ZOOM CONTROLS
+    ══════════════════════════════════════════════ */
+    document.getElementById('btnZoomIn').addEventListener('click', function () {
+      if (window.__TB_zoomIn) window.__TB_zoomIn();
+    });
+    document.getElementById('btnZoomOut').addEventListener('click', function () {
+      if (window.__TB_zoomOut) window.__TB_zoomOut();
+    });
+    document.getElementById('btnZoomFit').addEventListener('click', function () {
+      if (window.__TB_fitView) window.__TB_fitView();
+    });
+
+    /* ── Clear Team: handled by build system (team-builder-builds.js) ── */
+
+    /* ══════════════════════════════════════════════
+       SYNERGY PANEL RENDERING
+    ══════════════════════════════════════════════ */
+    var synergyEmpty = document.getElementById('synergyEmpty');
+    var synergyEdgesSection = document.getElementById('synergyEdges');
+    var synergyTeamSection = document.getElementById('synergyTeam');
+    var synergyEdgeList = document.getElementById('synergyEdgeList');
+    var synergyTeamList = document.getElementById('synergyTeamList');
+
+    window.addEventListener('tb-synergy-update', function (e) {
+      var detail = e.detail;
+      var edgeSynergies = detail.edgeSynergies || [];
+      var teamSynergies = detail.teamSynergies || [];
+
+      var hasEdgeSyn = edgeSynergies.some(function (es) { return es.synergy !== null; });
+      var hasTeamSyn = teamSynergies.length > 0;
+      var hasAny = hasEdgeSyn || hasTeamSyn;
+
+      /* Toggle empty state */
+      synergyEmpty.style.display = hasAny ? 'none' : '';
+
+      /* ── Edge synergies ── */
+      if (hasEdgeSyn) {
+        synergyEdgesSection.style.display = '';
+        var html = '';
+        edgeSynergies.forEach(function (es) {
+          if (!es.synergy) return;
+          var syn = es.synergy;
+          html +=
+            '<div class="tb-synergy-item" style="--syn-color:' + syn.color + ';">' +
+              '<div class="tb-synergy-item-icon">' + (syn.icon || '\u2605') + '</div>' +
+              '<div class="tb-synergy-item-info">' +
+                '<div class="tb-synergy-item-label">' + syn.label + '</div>' +
+                '<div class="tb-synergy-item-desc">' + syn.description + '</div>' +
+              '</div>' +
+              '<div class="tb-synergy-item-color" style="background:' + syn.color + ';"></div>' +
+            '</div>';
+        });
+        synergyEdgeList.innerHTML = html;
+      } else {
+        synergyEdgesSection.style.display = 'none';
+        synergyEdgeList.innerHTML = '';
+      }
+
+      /* ── Team synergies ── */
+      if (hasTeamSyn) {
+        synergyTeamSection.style.display = '';
+        var html2 = '';
+        teamSynergies.forEach(function (ts) {
+          var pct = Math.round((ts.count / ts.total) * 100);
+          html2 +=
+            '<div class="tb-synergy-item team-synergy" style="--syn-color:' + ts.type.color + ';">' +
+              '<div class="tb-synergy-item-icon">' + (ts.type.icon || '\u2605') + '</div>' +
+              '<div class="tb-synergy-item-info">' +
+                '<div class="tb-synergy-item-label">' + ts.group + '</div>' +
+                '<div class="tb-synergy-item-members">' + ts.members.join(', ') + '</div>' +
+                '<div class="tb-synergy-progress">' +
+                  '<div class="tb-synergy-progress-bar" style="width:' + pct + '%;background:' + ts.type.color + ';"></div>' +
+                '</div>' +
+                '<div class="tb-synergy-item-desc">' + ts.count + '/' + ts.total + ' members</div>' +
+              '</div>' +
+            '</div>';
+        });
+        synergyTeamList.innerHTML = html2;
+      } else {
+        synergyTeamSection.style.display = 'none';
+        synergyTeamList.innerHTML = '';
+      }
+    });
+
+    /* ══════════════════════════════════════════════
+       LOAD DATA
+    ══════════════════════════════════════════════ */
+    async function loadCharacterSelector() {
+      try {
+        _allCharsData = await CharDB.loadAll();
+      } catch (e) {
+        try {
+          var resp = await fetch('data/characters.json');
+          _allCharsData = await resp.json();
+        } catch (e2) { _allCharsData = []; }
+      }
+      renderCharacterList(_allCharsData);
+    }
+
+    async function loadWeaponSelector() {
+      try {
+        if (typeof WeaponDB !== 'undefined') {
+          _allWeaponsData = await WeaponDB.fetchAll();
+        }
+      } catch (e) {}
+
+      if (!_allWeaponsData || _allWeaponsData.length === 0) {
+        try {
+          var resp = await fetch('data/weapons.json');
+          var data = await resp.json();
+          _allWeaponsData = data.weapons || data || [];
+        } catch (e2) { _allWeaponsData = []; }
+      }
+      renderWeaponList(_allWeaponsData);
+    }
+
+    document.addEventListener('DOMContentLoaded', async function () {
+      await loadCharacterSelector();
+      await loadWeaponSelector();
+
+      /* Initialize Build System (Save, Copy Link, Export Image, Clear Team) */
+      if (window.__TB_BuildSystem) {
+        window.__TB_BuildSystem.init(_allCharsData, _allWeaponsData);
+      }
+    });
+
+  })();
+  </script>
+
+</body>
+</html>
