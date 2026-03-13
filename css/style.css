@@ -536,3 +536,15 @@ display:inline-block;
 vertical-align:middle;
 margin-right:8px;
 }
+.weapon-type-badge svg{
+width:14px;
+height:14px;
+margin-right:4px;
+vertical-align:middle;
+}
+.card-weapon-pill svg{
+width:12px;
+height:12px;
+margin-right:3px;
+vertical-align:middle;
+}
