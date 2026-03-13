@@ -101,25 +101,11 @@
 
 /* ── Three-Panel Layout ── */
 .tb-layout {
-  display: flex;
+  display: grid;
+  grid-template-columns: 280px 1fr 300px;
   height: calc(100vh - 64px - 120px - 52px);
-  min-height: 600px;
+  min-height: 500px;
   overflow: hidden;
-}
-
-.tb-left-panel {
-  width: 280px;
-  flex-shrink: 0;
-}
-
-.tb-center-panel {
-  flex: 1;
-  min-width: 0;
-}
-
-.tb-right-panel {
-  width: 300px;
-  flex-shrink: 0;
 }
 
 /* ── Left Panel: Community Builds ── */
@@ -294,18 +280,14 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  padding: 12px;
-  box-sizing: border-box;
+  min-height: 0;
 }
 
 .tb-canvas-area {
   flex: 1;
   position: relative;
   overflow: hidden;
-  min-height: 300px;
-  background: rgba(0,0,0,0.2);
-  border-radius: 12px;
-  border: 1px solid rgba(96,165,250,0.1);
+  min-height: 450px;
 }
 
 /* Canvas grid background */
@@ -445,9 +427,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 16px;
-  background: rgba(2, 6, 23, 0.6);
-  border-top: 1px solid rgba(96,165,250,0.1);
+  padding: 8px 16px;
+  background: rgba(2, 6, 23, 0.8);
+  border-top: 1px solid var(--border);
   font-size: 11px;
   color: var(--muted);
   letter-spacing: 0.5px;
@@ -513,21 +495,13 @@
   background: linear-gradient(135deg, rgba(11, 16, 32, 0.97), rgba(15, 23, 42, 0.97));
   border: 1px solid rgba(240, 192, 64, 0.15);
   border-radius: 10px;
-  margin: 12px 0 0;
+  margin: 16px 0 0;
   padding: 0;
   overflow: hidden;
   transition: all 0.3s ease;
   position: relative;
   z-index: 10;
   flex-shrink: 0;
-  max-height: 250px;
-  display: flex;
-  flex-direction: column;
-}
-
-.tb-synergy-content {
-  overflow-y: auto;
-  flex: 1;
 }
 
 .tb-synergy-header {
