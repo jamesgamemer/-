@@ -207,11 +207,12 @@
 }
 
 .tb-build-char-thumb {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: 8px;
   border: 1.5px solid var(--border);
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
   background: var(--dark2);
   transition: border-color 0.2s;
 }
@@ -279,16 +280,14 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
 .tb-canvas-area {
   flex: 1;
   position: relative;
   overflow: hidden;
-  min-height: 900px;
-  background: rgba(0,0,0,0.2);
-  border-radius: 12px;
-  border: 1px solid rgba(96,165,250,0.1);
+  min-height: 450px;
 }
 
 /* Canvas grid background */
@@ -360,7 +359,8 @@
 .tb-char-node-portrait {
   width: 100%;
   height: 100px;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
   display: block;
   background: var(--dark2);
 }
@@ -495,10 +495,13 @@
   background: linear-gradient(135deg, rgba(11, 16, 32, 0.97), rgba(15, 23, 42, 0.97));
   border: 1px solid rgba(240, 192, 64, 0.15);
   border-radius: 10px;
-  margin: 8px 0 0;
+  margin: 16px 0 0;
   padding: 0;
   overflow: hidden;
   transition: all 0.3s ease;
+  position: relative;
+  z-index: 10;
+  flex-shrink: 0;
 }
 
 .tb-synergy-header {
@@ -842,7 +845,8 @@
   text-align: center;
   user-select: none;
   -webkit-user-select: none;
-   max-width: 140px;
+  max-width: 140px;
+  margin: 0 auto;
 }
 
 .tb-char-select-card:hover {
@@ -863,8 +867,9 @@
 
 .tb-char-select-card img {
   width: 100%;
-  height: 150px;
+  height: 100px;
   object-fit: contain;
+  object-position: center;
   display: block;
   background: var(--dark2);
   pointer-events: none;
@@ -1080,7 +1085,6 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  min-height: 900px;
   z-index: 2;
 }
 
@@ -1221,7 +1225,8 @@
 .wpicker-item-icon img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
 }
 
 .wpicker-item-icon span {

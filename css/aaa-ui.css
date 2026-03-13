@@ -205,9 +205,10 @@
 }
 
 .weapon-icon-wrap img {
-  width: 120px;
-  height: 120px;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
+  object-position: center;
   transition: transform 0.4s ease;
 }
 
@@ -398,6 +399,9 @@ display: flex;
 .modal-weapon-preview img {
   width: 100%;
   max-width: 250px;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
   filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
 }
 
@@ -484,9 +488,12 @@ display: flex;
 
 .char-card-mini img {
   width: 100%;
+  height: auto;
   border-radius: 8px;
   margin-bottom: 8px;
   background: var(--modal-bg);
+  object-fit: contain;
+  object-position: center;
 }
 
 .char-card-name {
