@@ -306,19 +306,20 @@
 
     /* ---- Weapon Category → Icon Map ---- */
     var WEAPON_ICONS = {
-      'axe':           '&#129683;',
-      'cudgel':        '&#128296;',
-      'dual swords':   '&#9876;',
-      'gauntlets':     '&#129354;',
-      'greatsword':    '&#128481;',
-      'grimoire':      '&#128214;',
-      'lance':         '&#128737;',
-      'longsword':     '&#9876;',
-      'rapier':        '&#128301;',
-      'staff':         '&#129702;',
-      'sword & shield':'&#128737;',
-      'wand':          '&#10024;'
-    };
+ var WEAPON_ICONS = {
+  'axe':            '🪓',
+  'cudgel':         '🔨',
+  'dual swords':    '⚔️',
+  'gauntlets':      '🥊',
+  'greatsword':     '🗡️',
+  'grimoire':       '📖',
+  'lance':          '🔱',
+  'longsword':      '🗡️',
+  'rapier':         '🗡️',
+  'staff':          '🔮',
+  'sword & shield': '🛡️',
+  'wand':           '✨'
+};
 
     function getWeaponIcon(type) {
       return WEAPON_ICONS[(type || '').toLowerCase()] || '&#9876;';
