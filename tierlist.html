@@ -341,6 +341,185 @@
     }
 
     /* ══════════════════════════════════════════════
+       PUBLISH MODAL
+    ══════════════════════════════════════════════ */
+    .tl-modal-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.25s;
+    }
+    .tl-modal-overlay.active { opacity: 1; pointer-events: auto; }
+    .tl-modal {
+      background: var(--dark2); border: 1px solid var(--border);
+      border-radius: 16px; width: 90%; max-width: 480px;
+      padding: 28px; position: relative;
+    }
+    .tl-modal-title {
+      font-family: 'Cinzel', serif; font-size: 20px; color: var(--gold);
+      margin-bottom: 18px;
+    }
+    .tl-modal-label {
+      font-size: 12px; font-weight: 700; color: var(--muted);
+      letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px;
+    }
+    .tl-modal-input {
+      width: 100%; padding: 9px 14px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--dark3);
+      color: var(--text); font-family: 'Rajdhani', sans-serif;
+      font-size: 14px; margin-bottom: 14px; box-sizing: border-box;
+    }
+    .tl-modal-input:focus { outline: none; border-color: var(--gold); }
+    .tl-modal-textarea {
+      width: 100%; padding: 9px 14px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--dark3);
+      color: var(--text); font-family: 'Rajdhani', sans-serif;
+      font-size: 13px; margin-bottom: 14px; resize: vertical;
+      min-height: 60px; box-sizing: border-box;
+    }
+    .tl-modal-textarea:focus { outline: none; border-color: var(--gold); }
+    .tl-modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+    .tl-modal-btn {
+      padding: 9px 22px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--dark3); color: var(--muted); font-family: 'Rajdhani', sans-serif;
+      font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.2s;
+    }
+    .tl-modal-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .tl-modal-btn-primary {
+      background: rgba(240,192,64,0.15); border-color: rgba(240,192,64,0.4);
+      color: var(--gold);
+    }
+    .tl-modal-btn-primary:hover { background: rgba(240,192,64,0.25); }
+    .tl-modal-close {
+      position: absolute; top: 14px; right: 16px; background: none;
+      border: none; color: var(--muted); font-size: 22px; cursor: pointer;
+      line-height: 1;
+    }
+    .tl-modal-close:hover { color: var(--text); }
+
+    /* ══════════════════════════════════════════════
+       COMMUNITY TIER LISTS GALLERY
+    ══════════════════════════════════════════════ */
+    .community-section {
+      margin-top: 40px; padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .community-section-title {
+      font-family: 'Cinzel', serif; font-size: 22px; color: var(--gold);
+      margin-bottom: 8px;
+    }
+    .community-section-sub {
+      font-size: 13px; color: var(--muted); margin-bottom: 20px;
+    }
+    .community-tl-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+    .community-tl-card {
+      background: var(--dark3); border: 1px solid var(--border);
+      border-radius: 12px; padding: 18px; cursor: pointer;
+      transition: border-color 0.2s, transform 0.15s;
+    }
+    .community-tl-card:hover {
+      border-color: rgba(240,192,64,0.4); transform: translateY(-2px);
+    }
+    .community-tl-card-header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 10px;
+    }
+    .community-tl-card-title {
+      font-family: 'Rajdhani', sans-serif; font-size: 16px;
+      font-weight: 700; color: var(--text);
+    }
+    .community-tl-card-author {
+      font-size: 11px; color: var(--muted); margin-top: 2px;
+    }
+    .community-tl-card-vote {
+      display: flex; align-items: center; gap: 4px;
+    }
+    .community-tl-vote-btn {
+      background: none; border: 1px solid var(--border); border-radius: 6px;
+      color: var(--muted); font-size: 14px; padding: 3px 8px; cursor: pointer;
+      transition: 0.2s;
+    }
+    .community-tl-vote-btn:hover {
+      border-color: var(--gold); color: var(--gold);
+    }
+    .community-tl-vote-btn.voted {
+      border-color: var(--gold); color: var(--gold); background: rgba(240,192,64,0.1);
+    }
+    .community-tl-vote-count {
+      font-size: 13px; font-weight: 700; color: var(--gold); min-width: 20px;
+      text-align: center;
+    }
+    .community-tl-card-desc {
+      font-size: 12px; color: var(--muted); margin-bottom: 10px;
+      line-height: 1.4;
+    }
+    .community-tl-mini-tiers {
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .community-tl-mini-row {
+      display: flex; align-items: center; gap: 6px;
+    }
+    .community-tl-mini-label {
+      width: 22px; height: 22px; border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900;
+      flex-shrink: 0;
+    }
+    .community-tl-mini-label.s { background: rgba(255,107,107,0.15); color: #ff6b6b; }
+    .community-tl-mini-label.a { background: rgba(255,159,67,0.15); color: #ff9f43; }
+    .community-tl-mini-label.b { background: rgba(255,211,42,0.15); color: #ffd32a; }
+    .community-tl-mini-label.c { background: rgba(11,232,129,0.15); color: #0be881; }
+    .community-tl-mini-label.d { background: rgba(75,207,250,0.15); color: #4bcffa; }
+    .community-tl-mini-chars {
+      display: flex; flex-wrap: wrap; gap: 3px;
+    }
+    .community-tl-mini-img {
+      width: 26px; height: 26px; border-radius: 4px;
+      object-fit: cover; object-position: center top;
+      border: 1px solid var(--border);
+    }
+    .community-tl-mini-more {
+      font-size: 10px; color: var(--muted); display: flex;
+      align-items: center; padding: 0 4px;
+    }
+    .community-tl-card-date {
+      font-size: 10px; color: var(--muted); margin-top: 10px;
+      text-align: right;
+    }
+    .community-tl-empty {
+      text-align: center; color: var(--muted); padding: 40px 20px;
+      font-size: 14px;
+    }
+    .community-tl-loading {
+      text-align: center; color: var(--muted); padding: 30px;
+    }
+
+    /* ══════════════════════════════════════════════
+       TOAST
+    ══════════════════════════════════════════════ */
+    .tl-toast-container {
+      position: fixed; top: 20px; right: 20px; z-index: 99999;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .tl-toast {
+      padding: 10px 18px; border-radius: 10px;
+      font-family: 'Rajdhani', sans-serif; font-size: 14px;
+      font-weight: 600; color: var(--text);
+      background: var(--dark3); border: 1px solid var(--border);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      transform: translateX(120%); transition: transform 0.3s;
+    }
+    .tl-toast.show { transform: translateX(0); }
+    .tl-toast.hide { transform: translateX(120%); }
+    .tl-toast-success { border-color: rgba(34,197,94,0.4); }
+    .tl-toast-error { border-color: rgba(239,68,68,0.4); }
+    .tl-toast-info { border-color: rgba(96,165,250,0.4); }
+    .tl-toast-warning { border-color: rgba(240,192,64,0.4); }
+
+    /* ══════════════════════════════════════════════
        RESPONSIVE
     ══════════════════════════════════════════════ */
     @media (max-width: 768px) {
@@ -463,6 +642,7 @@
         <button class="tl-btn" onclick="resetTierList()">&#8635; Reset</button>
         <button class="tl-btn tl-btn-primary" onclick="saveTierListImage()">&#128247; Save as Image</button>
         <button class="tl-btn" onclick="shareTierList()">&#128279; Copy Share Link</button>
+        <button class="tl-btn tl-btn-primary" onclick="openPublishModal()" id="btnPublishTL" style="display:none;">&#128228; Publish to Community</button>
       </div>
 
       <!-- Character Pool (Create mode) -->
@@ -470,6 +650,32 @@
         <div class="pool-title" data-i18n="tl_pool">Character Pool</div>
         <p class="drag-hint">&#128073; Drag characters from the pool into any tier row. Drag back to remove.</p>
         <div id="characterPool"></div>
+      </div>
+      <!-- Community Tier Lists (View mode) -->
+      <div class="community-section" id="communityTLSection">
+        <div class="community-section-title">&#127942; Community Tier Lists</div>
+        <div class="community-section-sub">Tier lists created and shared by the community. Click to view.</div>
+        <div id="communityTLGrid" class="community-tl-grid">
+          <div class="community-tl-loading">Loading community tier lists...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Publish Modal -->
+  <div class="tl-modal-overlay" id="publishModal">
+    <div class="tl-modal">
+      <button class="tl-modal-close" onclick="closePublishModal()">&times;</button>
+      <div class="tl-modal-title">&#128228; Publish Tier List</div>
+      <div class="tl-modal-label">Title</div>
+      <input type="text" class="tl-modal-input" id="publishTitle" placeholder="My Tier List" maxlength="60">
+      <div class="tl-modal-label">Author Name</div>
+      <input type="text" class="tl-modal-input" id="publishAuthor" placeholder="Anonymous" maxlength="30">
+      <div class="tl-modal-label">Description (optional)</div>
+      <textarea class="tl-modal-textarea" id="publishDesc" placeholder="Brief description of your tier list..." maxlength="200"></textarea>
+      <div class="tl-modal-actions">
+        <button class="tl-modal-btn" onclick="closePublishModal()">Cancel</button>
+        <button class="tl-modal-btn tl-modal-btn-primary" onclick="publishTierList()" id="btnConfirmPublish">&#128228; Publish</button>
       </div>
     </div>
   </div>
@@ -915,13 +1121,327 @@
     }
 
     /* ══════════════════════════════════════════════
+       TOAST SYSTEM
+    ══════════════════════════════════════════════ */
+    function tlToast(message, type) {
+      type = type || 'info';
+      var container = document.querySelector('.tl-toast-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.className = 'tl-toast-container';
+        document.body.appendChild(container);
+      }
+      var toast = document.createElement('div');
+      toast.className = 'tl-toast tl-toast-' + type;
+      toast.textContent = message;
+      container.appendChild(toast);
+      requestAnimationFrame(function() { toast.classList.add('show'); });
+      setTimeout(function() {
+        toast.classList.remove('show');
+        toast.classList.add('hide');
+        setTimeout(function() { toast.remove(); }, 300);
+      }, 3000);
+    }
+
+    /* ══════════════════════════════════════════════
+       PUBLISH TIER LIST TO SUPABASE
+    ══════════════════════════════════════════════ */
+    function openPublishModal() {
+      /* Check if any tier has characters */
+      var hasChars = false;
+      ['S','A','B','C','D'].forEach(function(t) {
+        if (document.getElementById('tier-' + t).querySelectorAll('.tl-portrait').length > 0) hasChars = true;
+      });
+      if (!hasChars) {
+        tlToast('Place characters in tiers before publishing!', 'warning');
+        return;
+      }
+      document.getElementById('publishModal').classList.add('active');
+      document.getElementById('publishTitle').focus();
+    }
+
+    function closePublishModal() {
+      document.getElementById('publishModal').classList.remove('active');
+    }
+
+    async function publishTierList() {
+      var title = document.getElementById('publishTitle').value.trim() || 'My Tier List';
+      var author = document.getElementById('publishAuthor').value.trim() || 'Anonymous';
+      var desc = document.getElementById('publishDesc').value.trim();
+
+      /* Serialize current tier placements */
+      var tiers = {};
+      ['S','A','B','C','D'].forEach(function(t) {
+        tiers[t] = [];
+        document.getElementById('tier-' + t).querySelectorAll('.tl-portrait').forEach(function(p) {
+          tiers[t].push(p.dataset.name);
+        });
+      });
+
+      /* Check Supabase */
+      if (!SupaDB.isConnected()) {
+        tlToast('Database not connected. Saving locally instead.', 'warning');
+        savePublishedLocally(title, author, desc, tiers);
+        closePublishModal();
+        return;
+      }
+
+      var btn = document.getElementById('btnConfirmPublish');
+      btn.textContent = 'Publishing...';
+      btn.disabled = true;
+
+      try {
+        var client = SupaDB.getClient();
+        var { data, error } = await client.from('community_tier_lists').insert([{
+          author_name: author,
+          title: title,
+          description: desc,
+          tiers: tiers,
+          votes: 0
+        }]).select().single();
+
+        if (error) throw error;
+
+        tlToast('Tier list published successfully!', 'success');
+        closePublishModal();
+        /* Reset form */
+        document.getElementById('publishTitle').value = '';
+        document.getElementById('publishAuthor').value = '';
+        document.getElementById('publishDesc').value = '';
+        /* Refresh community list */
+        loadCommunityTierLists();
+      } catch (err) {
+        console.error('[TierList] Publish error:', err);
+        tlToast('Failed to publish: ' + (err.message || 'Unknown error'), 'error');
+        /* Fallback to local */
+        savePublishedLocally(title, author, desc, tiers);
+      } finally {
+        btn.textContent = '\uD83D\uDCE4 Publish';
+        btn.disabled = false;
+      }
+    }
+
+    function savePublishedLocally(title, author, desc, tiers) {
+      var list = JSON.parse(localStorage.getItem('7dso-community-tl') || '[]');
+      list.unshift({
+        id: 'local-' + Date.now(),
+        author_name: author,
+        title: title,
+        description: desc,
+        tiers: tiers,
+        votes: 0,
+        created_at: new Date().toISOString()
+      });
+      if (list.length > 50) list = list.slice(0, 50);
+      localStorage.setItem('7dso-community-tl', JSON.stringify(list));
+      tlToast('Saved locally!', 'success');
+      loadCommunityTierLists();
+    }
+
+    /* ══════════════════════════════════════════════
+       LOAD & RENDER COMMUNITY TIER LISTS
+    ══════════════════════════════════════════════ */
+    async function loadCommunityTierLists() {
+      var grid = document.getElementById('communityTLGrid');
+      grid.innerHTML = '<div class="community-tl-loading">Loading...</div>';
+
+      var items = [];
+
+      /* Try Supabase first */
+      if (SupaDB.isConnected()) {
+        try {
+          var client = SupaDB.getClient();
+          var { data, error } = await client
+            .from('community_tier_lists')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(30);
+          if (!error && data) items = data;
+        } catch (e) { console.warn('[TierList] Supabase fetch error:', e); }
+      }
+
+      /* Merge with local items */
+      var localItems = JSON.parse(localStorage.getItem('7dso-community-tl') || '[]');
+      items = items.concat(localItems);
+
+      /* Sort by date descending */
+      items.sort(function(a, b) {
+        return new Date(b.created_at) - new Date(a.created_at);
+      });
+
+      renderCommunityTierLists(items);
+    }
+
+    function renderCommunityTierLists(items) {
+      var grid = document.getElementById('communityTLGrid');
+
+      if (!items || items.length === 0) {
+        grid.innerHTML = '<div class="community-tl-empty">No community tier lists yet. Be the first to publish one!</div>';
+        return;
+      }
+
+      /* Build charMap for images */
+      var charMap = {};
+      allChars.forEach(function(c) {
+        charMap[(c.name_en || c.name || '').toLowerCase()] = c;
+      });
+
+      var html = '';
+      items.forEach(function(item) {
+        var tiers = item.tiers || {};
+        var date = new Date(item.created_at).toLocaleDateString();
+        var votedKey = '7dso-tl-voted-' + item.id;
+        var hasVoted = localStorage.getItem(votedKey) === '1';
+
+        html += '<div class="community-tl-card" data-tl-id="' + item.id + '">';
+        html += '<div class="community-tl-card-header">';
+        html += '<div>';
+        html += '<div class="community-tl-card-title">' + escHtml(item.title) + '</div>';
+        html += '<div class="community-tl-card-author">by ' + escHtml(item.author_name) + '</div>';
+        html += '</div>';
+        html += '<div class="community-tl-card-vote">';
+        html += '<button class="community-tl-vote-btn' + (hasVoted ? ' voted' : '') + '" data-vote-id="' + item.id + '" onclick="event.stopPropagation(); voteTierList(\'' + item.id + '\')">';
+        html += hasVoted ? '\u2605' : '\u2606';
+        html += '</button>';
+        html += '<span class="community-tl-vote-count" id="vote-count-' + item.id + '">' + (item.votes || 0) + '</span>';
+        html += '</div></div>';
+
+        if (item.description) {
+          html += '<div class="community-tl-card-desc">' + escHtml(item.description) + '</div>';
+        }
+
+        /* Mini tier preview */
+        html += '<div class="community-tl-mini-tiers">';
+        ['S','A','B','C','D'].forEach(function(t) {
+          var names = tiers[t] || [];
+          if (names.length === 0) return;
+          html += '<div class="community-tl-mini-row">';
+          html += '<div class="community-tl-mini-label ' + t.toLowerCase() + '">' + t + '</div>';
+          html += '<div class="community-tl-mini-chars">';
+          names.slice(0, 6).forEach(function(name) {
+            var c = charMap[name.toLowerCase()];
+            if (c && c.image) {
+              html += '<img class="community-tl-mini-img" src="' + c.image + '" alt="' + escHtml(name) + '" title="' + escHtml(name) + '">';
+            }
+          });
+          if (names.length > 6) {
+            html += '<span class="community-tl-mini-more">+' + (names.length - 6) + '</span>';
+          }
+          html += '</div></div>';
+        });
+        html += '</div>';
+
+        html += '<div class="community-tl-card-date">' + date + '</div>';
+        html += '</div>';
+      });
+
+      grid.innerHTML = html;
+
+      /* Bind click to load tier list */
+      grid.querySelectorAll('.community-tl-card').forEach(function(card) {
+        card.addEventListener('click', function() {
+          var tlId = card.dataset.tlId;
+          var item = items.find(function(i) { return String(i.id) === String(tlId); });
+          if (item) loadCommunityTierListIntoView(item);
+        });
+      });
+    }
+
+    function loadCommunityTierListIntoView(item) {
+      /* Switch to view mode and show this tier list */
+      switchMode('view');
+
+      var charMap = {};
+      allChars.forEach(function(c) {
+        charMap[(c.name_en || c.name || '').toLowerCase()] = c;
+      });
+
+      /* Clear all zones */
+      document.querySelectorAll('.tier-drop-zone').forEach(function(z) { z.innerHTML = ''; });
+      document.getElementById('characterPool').innerHTML = '';
+
+      var tiers = item.tiers || {};
+      ['S','A','B','C','D'].forEach(function(tier) {
+        var zone = document.getElementById('tier-' + tier);
+        (tiers[tier] || []).forEach(function(name) {
+          var c = charMap[name.toLowerCase()];
+          if (c) zone.appendChild(createPortrait(c));
+        });
+      });
+
+      updateDraggable();
+      updateEmptyHints();
+      document.getElementById('tlDisclaimer').textContent =
+        'Viewing: "' + item.title + '" by ' + item.author_name;
+
+      /* Scroll to top */
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      tlToast('Loaded: ' + item.title, 'info');
+    }
+
+    /* ══════════════════════════════════════════════
+       VOTE SYSTEM
+    ══════════════════════════════════════════════ */
+    async function voteTierList(tlId) {
+      var votedKey = '7dso-tl-voted-' + tlId;
+      var hasVoted = localStorage.getItem(votedKey) === '1';
+      var delta = hasVoted ? -1 : 1;
+
+      /* Update UI immediately */
+      var countEl = document.getElementById('vote-count-' + tlId);
+      var btn = document.querySelector('[data-vote-id="' + tlId + '"]');
+      if (countEl) countEl.textContent = parseInt(countEl.textContent || '0') + delta;
+      if (btn) {
+        btn.classList.toggle('voted');
+        btn.textContent = hasVoted ? '\u2606' : '\u2605';
+      }
+
+      if (hasVoted) {
+        localStorage.removeItem(votedKey);
+      } else {
+        localStorage.setItem(votedKey, '1');
+      }
+
+      /* Update in Supabase if connected and not local */
+      if (SupaDB.isConnected() && !String(tlId).startsWith('local-')) {
+        try {
+          var client = SupaDB.getClient();
+          /* Get current votes */
+          var { data } = await client.from('community_tier_lists').select('votes').eq('id', tlId).single();
+          if (data) {
+            await client.from('community_tier_lists').update({ votes: (data.votes || 0) + delta }).eq('id', tlId);
+          }
+        } catch (e) { console.warn('[TierList] Vote update error:', e); }
+      }
+
+      /* Update local items */
+      if (String(tlId).startsWith('local-')) {
+        var localItems = JSON.parse(localStorage.getItem('7dso-community-tl') || '[]');
+        localItems.forEach(function(item) {
+          if (item.id === tlId) item.votes = (item.votes || 0) + delta;
+        });
+        localStorage.setItem('7dso-community-tl', JSON.stringify(localItems));
+      }
+    }
+
+    function escHtml(str) {
+      var div = document.createElement('div');
+      div.textContent = str || '';
+      return div.innerHTML;
+    }
+
+    /* ══════════════════════════════════════════════
        INITIALIZATION
     ══════════════════════════════════════════════ */
     document.addEventListener('DOMContentLoaded', async function() {
       /* Auth */
       if (typeof Auth !== 'undefined') {
         var admin = await Auth.isLoggedIn();
-        if (admin) document.getElementById('adminBar').style.display = 'flex';
+        if (admin) {
+          document.getElementById('adminBar').style.display = 'flex';
+          var btnPub = document.getElementById('btnPublishTL');
+          if (btnPub) btnPub.style.display = '';
+        }
       }
 
       /* Load characters */
@@ -939,6 +1459,9 @@
         /* Default: view mode */
         switchMode('view');
       }
+
+      /* Load community tier lists */
+      loadCommunityTierLists();
     });
   </script>
 </body>

@@ -74,58 +74,15 @@
           Community Builds
         </div>
         <div class="tb-panel-subtitle">Load a pre-made team composition</div>
+        <button class="tb-upload-build-btn" id="btnUploadBuild" title="Upload current build to community" style="display:none;">
+          &#128228; Upload Build
+        </button>
       </div>
 
       <div class="tb-builds-list" id="communityBuildsList">
-
-        <!-- Build Card 1: Meta Shield Team -->
-        <div class="tb-build-card" data-build="meta-shield">
-          <div class="tb-build-card-name">Meta Shield Team</div>
-          <div class="tb-build-card-desc">Tanky frontline with shield synergy and healing support.</div>
-          <div class="tb-build-card-chars">
-            <img src="images/Daisy.png" alt="Daisy" class="tb-build-char-thumb" title="Daisy">
-            <img src="images/King.png" alt="King" class="tb-build-char-thumb" title="King">
-            <img src="images/Elizabeth.png" alt="Elizabeth" class="tb-build-char-thumb" title="Elizabeth">
-            <img src="images/Griamore.png" alt="Griamore" class="tb-build-char-thumb" title="Griamore">
-          </div>
-          <div class="tb-build-card-footer">
-            <span class="tb-build-tag tag-meta">META</span>
-            <button class="tb-load-btn">Load Build</button>
-          </div>
+        <div style="text-align:center; color: var(--muted); padding: 30px 10px; font-size: 13px;">
+          Loading community builds...
         </div>
-
-        <!-- Build Card 2: Magic Burst Team -->
-        <div class="tb-build-card" data-build="magic-burst">
-          <div class="tb-build-card-name">Magic Burst Team</div>
-          <div class="tb-build-card-desc">High magic damage output with MP regen synergy.</div>
-          <div class="tb-build-card-chars">
-            <img src="images/Merlin.png" alt="Merlin" class="tb-build-char-thumb" title="Merlin">
-            <img src="images/Gowther.png" alt="Gowther" class="tb-build-char-thumb" title="Gowther">
-            <img src="images/Elaine.png" alt="Elaine" class="tb-build-char-thumb" title="Elaine">
-            <img src="images/Daisy.png" alt="Daisy" class="tb-build-char-thumb" title="Daisy">
-          </div>
-          <div class="tb-build-card-footer">
-            <span class="tb-build-tag tag-magic">MAGIC</span>
-            <button class="tb-load-btn">Load Build</button>
-          </div>
-        </div>
-
-        <!-- Build Card 3: Tank Control Team -->
-        <div class="tb-build-card" data-build="tank-control">
-          <div class="tb-build-card-name">Tank Control Team</div>
-          <div class="tb-build-card-desc">Maximum survivability with crowd control and debuffs.</div>
-          <div class="tb-build-card-chars">
-            <img src="images/Diane.png" alt="Diane" class="tb-build-char-thumb" title="Diane">
-            <img src="images/Hendrickson.png" alt="Hendrickson" class="tb-build-char-thumb" title="Hendrickson">
-            <img src="images/Gilthunder.png" alt="Gilthunder" class="tb-build-char-thumb" title="Gilthunder">
-            <img src="images/King.png" alt="King" class="tb-build-char-thumb" title="King">
-          </div>
-          <div class="tb-build-card-footer">
-            <span class="tb-build-tag tag-tank">TANK</span>
-            <button class="tb-load-btn">Load Build</button>
-          </div>
-        </div>
-
       </div>
     </aside>
 
@@ -323,9 +280,49 @@
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════
+  <!-- ═════════════════════════════════════════════
+       UPLOAD BUILD MODAL
+  ═════════════════════════════════════════════ -->
+  <div class="tb-modal-overlay" id="uploadBuildModal">
+    <div class="tb-modal" style="max-width:480px;">
+      <div class="tb-modal-header">
+        <div class="tb-modal-title">&#128228; Upload Build to Community</div>
+        <button class="tb-modal-close" id="uploadBuildClose">&times;</button>
+      </div>
+      <div class="tb-modal-body">
+        <div class="tb-modal-section">
+          <label class="tb-modal-label">Build Name</label>
+          <input type="text" class="tb-modal-input" id="uploadBuildName" placeholder="My Awesome Team" maxlength="50">
+        </div>
+        <div class="tb-modal-section">
+          <label class="tb-modal-label">Author Name</label>
+          <input type="text" class="tb-modal-input" id="uploadBuildAuthor" placeholder="Anonymous" maxlength="30">
+        </div>
+        <div class="tb-modal-section">
+          <label class="tb-modal-label">Description (optional)</label>
+          <textarea class="tb-modal-input" id="uploadBuildDesc" placeholder="Brief description..." maxlength="200" style="min-height:60px;resize:vertical;"></textarea>
+        </div>
+        <div class="tb-modal-section">
+          <label class="tb-modal-label">Tag</label>
+          <select class="tb-modal-input" id="uploadBuildTag" style="cursor:pointer;">
+            <option value="GENERAL">GENERAL</option>
+            <option value="META">META</option>
+            <option value="MAGIC">MAGIC</option>
+            <option value="TANK">TANK</option>
+            <option value="DPS">DPS</option>
+          </select>
+        </div>
+        <div class="tb-modal-preview" id="uploadBuildPreview"></div>
+        <div class="tb-modal-section">
+          <button class="tb-modal-btn btn-primary" id="uploadBuildConfirm" style="width:100%;">&#128228; Upload to Community</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═════════════════════════════════════════════
        FOOTER
-  ═══════════════════════════════════════════ -->
+  ═════════════════════════════════════════════ -->
   <footer class="site-footer">
     <p data-i18n="footer_text">7DS Origin Database &mdash; Fan-made site &mdash; Not affiliated with Netmarble</p>
     <p style="margin-top:8px;">
@@ -995,6 +992,324 @@
       renderWeaponList(_allWeaponsData);
     }
 
+    /* ══════════════════════════════════════════════
+       COMMUNITY BUILDS SYSTEM
+    ══════════════════════════════════════════════ */
+    var _communityBuilds = [];
+
+    function escHtml(str) {
+      var div = document.createElement('div');
+      div.textContent = str || '';
+      return div.innerHTML;
+    }
+
+    function tbToast(msg, type) {
+      if (window.__TB_BuildSystem && window.__TB_BuildSystem.toast) {
+        window.__TB_BuildSystem.toast(msg, type || 'info');
+      } else {
+        alert(msg);
+      }
+    }
+
+    /* ── Get current canvas state ── */
+    function getCurrentBuildState() {
+      var nodes = [];
+      var edges = [];
+      /* Try to get from ReactFlow instance */
+      if (window.__TB_getNodes) {
+        try {
+          var rfNodes = window.__TB_getNodes();
+          rfNodes.forEach(function(n) {
+            nodes.push({
+              id: n.id,
+              charName: n.data && n.data.character ? (n.data.character.name_en || n.data.character.name || '') : '',
+              charSlug: n.data && n.data.character ? (n.data.character.slug || '') : '',
+              charImage: n.data && n.data.character ? (n.data.character.image || '') : '',
+              charRarity: n.data && n.data.character ? (n.data.character.rarity || '') : '',
+              x: n.position ? n.position.x : 0,
+              y: n.position ? n.position.y : 0,
+              weapons: n.data ? (n.data.weapons || []) : []
+            });
+          });
+        } catch(e) { console.warn('[CB] getNodes error:', e); }
+      }
+      if (window.__TB_getEdges) {
+        try {
+          var rfEdges = window.__TB_getEdges();
+          rfEdges.forEach(function(e) {
+            edges.push({ source: e.source, target: e.target, label: e.label || '' });
+          });
+        } catch(e) { console.warn('[CB] getEdges error:', e); }
+      }
+      return { nodes: nodes, edges: edges };
+    }
+
+    /* ── Open Upload Modal ── */
+    function openUploadBuildModal() {
+      var state = getCurrentBuildState();
+      if (!state.nodes || state.nodes.length === 0) {
+        tbToast('Add characters to the canvas first!', 'warning');
+        return;
+      }
+
+      /* Show preview */
+      var preview = document.getElementById('uploadBuildPreview');
+      var html = '<div style="display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;">';
+      state.nodes.forEach(function(n) {
+        if (n.charImage) {
+          html += '<img src="' + n.charImage + '" title="' + escHtml(n.charName) + '" style="width:36px;height:36px;border-radius:6px;object-fit:cover;object-position:center top;border:1px solid rgba(240,192,64,0.3);">';
+        }
+      });
+      html += '</div>';
+      html += '<div style="font-size:11px;color:#64748b;">' + state.nodes.length + ' characters, ' + state.edges.length + ' connections</div>';
+      preview.innerHTML = html;
+
+      document.getElementById('uploadBuildModal').classList.add('active');
+      document.getElementById('uploadBuildName').focus();
+    }
+
+    function closeUploadBuildModal() {
+      document.getElementById('uploadBuildModal').classList.remove('active');
+    }
+
+    /* ── Upload Build ── */
+    async function uploadBuild() {
+      var name = document.getElementById('uploadBuildName').value.trim() || 'My Team';
+      var author = document.getElementById('uploadBuildAuthor').value.trim() || 'Anonymous';
+      var desc = document.getElementById('uploadBuildDesc').value.trim();
+      var tag = document.getElementById('uploadBuildTag').value;
+      var state = getCurrentBuildState();
+
+      var buildData = {
+        title: name,
+        author_name: author,
+        description: desc,
+        tag: tag,
+        nodes: state.nodes,
+        edges: state.edges,
+        char_names: state.nodes.map(function(n) { return n.charName; }),
+        char_count: state.nodes.length,
+        votes: 0,
+        created_at: new Date().toISOString()
+      };
+
+      var btn = document.getElementById('uploadBuildConfirm');
+      btn.textContent = 'Uploading...';
+      btn.disabled = true;
+
+      /* Try Supabase */
+      if (typeof SupaDB !== 'undefined' && SupaDB.isConnected()) {
+        try {
+          var client = SupaDB.getClient();
+          var { data, error } = await client.from('community_builds').insert([{
+            author_name: author,
+            title: name,
+            description: desc,
+            tag: tag,
+            build_data: { nodes: state.nodes, edges: state.edges },
+            char_names: state.nodes.map(function(n) { return n.charName; }),
+            char_count: state.nodes.length,
+            votes: 0
+          }]).select().single();
+
+          if (error) throw error;
+          tbToast('Build uploaded to community!', 'success');
+          closeUploadBuildModal();
+          resetUploadForm();
+          loadCommunityBuilds();
+          btn.textContent = '\uD83D\uDCE4 Upload to Community';
+          btn.disabled = false;
+          return;
+        } catch (err) {
+          console.warn('[CB] Supabase upload error:', err);
+          tbToast('Supabase error, saving locally.', 'warning');
+        }
+      }
+
+      /* Fallback: localStorage */
+      buildData.id = 'local-' + Date.now();
+      var list = JSON.parse(localStorage.getItem('7dso-community-builds') || '[]');
+      list.unshift(buildData);
+      if (list.length > 30) list = list.slice(0, 30);
+      localStorage.setItem('7dso-community-builds', JSON.stringify(list));
+      tbToast('Build saved locally!', 'success');
+      closeUploadBuildModal();
+      resetUploadForm();
+      loadCommunityBuilds();
+      btn.textContent = '\uD83D\uDCE4 Upload to Community';
+      btn.disabled = false;
+    }
+
+    function resetUploadForm() {
+      document.getElementById('uploadBuildName').value = '';
+      document.getElementById('uploadBuildAuthor').value = '';
+      document.getElementById('uploadBuildDesc').value = '';
+      document.getElementById('uploadBuildTag').value = 'GENERAL';
+      document.getElementById('uploadBuildPreview').innerHTML = '';
+    }
+
+    /* ── Load Community Builds ── */
+    async function loadCommunityBuilds() {
+      var container = document.getElementById('communityBuildsList');
+      container.innerHTML = '<div style="text-align:center;color:#64748b;padding:20px 10px;font-size:13px;">Loading...</div>';
+
+      var items = [];
+
+      /* Try Supabase */
+      if (typeof SupaDB !== 'undefined' && SupaDB.isConnected()) {
+        try {
+          var client = SupaDB.getClient();
+          var { data, error } = await client
+            .from('community_builds')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(30);
+          if (!error && data) {
+            items = data.map(function(d) {
+              return {
+                id: d.id,
+                title: d.title,
+                author_name: d.author_name,
+                description: d.description,
+                tag: d.tag,
+                nodes: d.build_data ? d.build_data.nodes : [],
+                edges: d.build_data ? d.build_data.edges : [],
+                char_names: d.char_names || [],
+                char_count: d.char_count || 0,
+                votes: d.votes || 0,
+                created_at: d.created_at
+              };
+            });
+          }
+        } catch (e) { console.warn('[CB] Supabase fetch error:', e); }
+      }
+
+      /* Merge local */
+      var localItems = JSON.parse(localStorage.getItem('7dso-community-builds') || '[]');
+      items = items.concat(localItems);
+
+      /* Sort by date */
+      items.sort(function(a, b) {
+        return new Date(b.created_at) - new Date(a.created_at);
+      });
+
+      _communityBuilds = items;
+      renderCommunityBuilds(items);
+    }
+
+    function renderCommunityBuilds(items) {
+      var container = document.getElementById('communityBuildsList');
+
+      if (!items || items.length === 0) {
+        container.innerHTML = '<div style="text-align:center;color:#64748b;padding:30px 10px;font-size:13px;">No community builds yet.<br>Create a team and upload it!</div>';
+        return;
+      }
+
+      var html = '';
+      items.forEach(function(item, idx) {
+        var tagClass = 'tag-' + (item.tag || 'general').toLowerCase();
+        var charImgs = '';
+        (item.nodes || []).slice(0, 4).forEach(function(n) {
+          if (n.charImage) {
+            charImgs += '<img src="' + n.charImage + '" alt="' + escHtml(n.charName) + '" class="tb-build-char-thumb" title="' + escHtml(n.charName) + '">';
+          }
+        });
+        if ((item.nodes || []).length > 4) {
+          charImgs += '<span style="font-size:10px;color:#64748b;display:flex;align-items:center;">+' + ((item.nodes || []).length - 4) + '</span>';
+        }
+
+        html += '<div class="tb-build-card tb-build-card-dynamic" data-build-idx="' + idx + '">';
+        html += '<div class="tb-build-card-header">';
+        html += '<div>';
+        html += '<div class="tb-build-card-name">' + escHtml(item.title) + '</div>';
+        html += '<div class="tb-build-card-author">by ' + escHtml(item.author_name) + '</div>';
+        html += '</div>';
+        html += '</div>';
+        if (item.description) {
+          html += '<div class="tb-build-card-desc">' + escHtml(item.description) + '</div>';
+        }
+        html += '<div class="tb-build-card-chars">' + charImgs + '</div>';
+        html += '<div class="tb-build-card-footer">';
+        html += '<span class="tb-build-tag ' + tagClass + '">' + escHtml(item.tag || 'GENERAL') + '</span>';
+        html += '</div>';
+        html += '<div class="tb-build-card-actions">';
+        html += '<button class="btn-load" onclick="loadCommunityBuild(' + idx + ')">&#9654; Load</button>';
+        html += '<button class="btn-edit" onclick="editCommunityBuild(' + idx + ')">&#9998; Edit</button>';
+        html += '</div>';
+        html += '</div>';
+      });
+
+      container.innerHTML = html;
+    }
+
+    /* ── Load Build into Canvas ── */
+    function loadCommunityBuild(idx) {
+      var item = _communityBuilds[idx];
+      if (!item) return;
+
+      /* Clear canvas first */
+      if (window.__TB_clearAllNodes) {
+        window.__TB_clearAllNodes();
+      }
+
+      /* Add nodes */
+      var charMap = {};
+      _allCharsData.forEach(function(c) {
+        charMap[(c.name_en || c.name || '').toLowerCase()] = c;
+      });
+
+      (item.nodes || []).forEach(function(n) {
+        var charData = charMap[(n.charName || '').toLowerCase()];
+        if (charData && window.__TB_addCharacterNodeAt) {
+          window.__TB_addCharacterNodeAt(charData, n.x || 0, n.y || 0);
+        } else if (charData && window.__TB_addCharacterNode) {
+          window.__TB_addCharacterNode(charData);
+        }
+      });
+
+      /* Restore edges after a short delay for nodes to render */
+      if (item.edges && item.edges.length > 0 && window.__TB_addEdge) {
+        setTimeout(function() {
+          item.edges.forEach(function(e) {
+            window.__TB_addEdge(e.source, e.target, e.label);
+          });
+        }, 500);
+      }
+
+      tbToast('Loaded: ' + item.title, 'success');
+    }
+
+    /* ── Edit Build (Load + keep reference) ── */
+    function editCommunityBuild(idx) {
+      loadCommunityBuild(idx);
+      tbToast('Build loaded for editing. Make changes and Upload again when done.', 'info');
+    }
+
+    /* ── Wire up events ── */
+    function initCommunityBuildsUI() {
+      var btnUpload = document.getElementById('btnUploadBuild');
+      if (btnUpload) {
+        btnUpload.addEventListener('click', openUploadBuildModal);
+      }
+
+      var btnClose = document.getElementById('uploadBuildClose');
+      if (btnClose) {
+        btnClose.addEventListener('click', closeUploadBuildModal);
+      }
+
+      var btnConfirm = document.getElementById('uploadBuildConfirm');
+      if (btnConfirm) {
+        btnConfirm.addEventListener('click', uploadBuild);
+      }
+
+      var overlay = document.getElementById('uploadBuildModal');
+      if (overlay) {
+        overlay.addEventListener('click', function(e) {
+          if (e.target === overlay) closeUploadBuildModal();
+        });
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', async function () {
       await loadCharacterSelector();
       await loadWeaponSelector();
@@ -1002,6 +1317,19 @@
       /* Initialize Build System (Save, Copy Link, Export Image, Clear Team) */
       if (window.__TB_BuildSystem) {
         window.__TB_BuildSystem.init(_allCharsData, _allWeaponsData);
+      }
+
+      /* Initialize Community Builds */
+      initCommunityBuildsUI();
+      loadCommunityBuilds();
+
+      /* Show Upload Build button only for admin */
+      if (typeof Auth !== 'undefined') {
+        var isAdmin = await Auth.isLoggedIn();
+        if (isAdmin) {
+          var btnUp = document.getElementById('btnUploadBuild');
+          if (btnUp) btnUp.style.display = '';
+        }
       }
     });
 
