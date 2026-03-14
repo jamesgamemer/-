@@ -422,8 +422,8 @@
         listWeapons.classList.remove('hidden');
         searchInput.placeholder = 'Search weapons by name...';
         weaponTypeFilterRow.style.display = 'none';
-        /* Switch weapon list to 1-column layout for side-by-side cards */
-        listWeapons.style.gridTemplateColumns = '1fr';
+        /* Switch weapon list to 2-column compact grid */
+        listWeapons.style.gridTemplateColumns = 'repeat(2, 1fr)';
         dragHint.textContent = 'Drag a weapon onto a character\'s weapon slot';
         dragHint.style.display = '';
         renderWeaponRarityFilters();
@@ -600,6 +600,60 @@
       });
     }
 
+    /* ══════════════════════════════════════════════
+       CHARACTER LIMIT SYSTEM (max 30)
+    ══════════════════════════════════════════════ */
+    var MAX_CANVAS_CHARS = 30;
+
+    function getCanvasNodeCount() {
+      if (window.__TB_getNodes) {
+        var nodes = window.__TB_getNodes();
+        return nodes ? nodes.length : 0;
+      }
+      return 0;
+    }
+
+    function isAtCapacity() {
+      return getCanvasNodeCount() >= MAX_CANVAS_CHARS;
+    }
+
+    function showCapacityWarning() {
+      if (window.__TB_BuildSystem && window.__TB_BuildSystem.showToast) {
+        window.__TB_BuildSystem.showToast('Maximum team capacity reached (30 characters)', 'warning');
+      } else {
+        alert('Maximum team capacity reached (30 characters)');
+      }
+    }
+
+    /* Wrap the original add functions to enforce limit */
+    var _origAddNode = null;
+    var _origAddNodeAt = null;
+
+    function patchAddFunctions() {
+      if (!_origAddNode && window.__TB_addCharacterNode) {
+        _origAddNode = window.__TB_addCharacterNode;
+        window.__TB_addCharacterNode = function (charObj) {
+          if (isAtCapacity()) { showCapacityWarning(); return null; }
+          return _origAddNode(charObj);
+        };
+      }
+      if (!_origAddNodeAt && window.__TB_addCharacterNodeAt) {
+        _origAddNodeAt = window.__TB_addCharacterNodeAt;
+        window.__TB_addCharacterNodeAt = function (charObj, x, y) {
+          if (isAtCapacity()) { showCapacityWarning(); return null; }
+          return _origAddNodeAt(charObj, x, y);
+        };
+      }
+    }
+
+    /* Patch as soon as available, and re-check periodically */
+    patchAddFunctions();
+    var _patchInterval = setInterval(function () {
+      patchAddFunctions();
+      if (_origAddNode && _origAddNodeAt) clearInterval(_patchInterval);
+    }, 300);
+    setTimeout(function () { clearInterval(_patchInterval); }, 10000);
+
     /* ── Canvas drop zone ── */
     canvasArea.addEventListener('dragover', function (e) {
       if (e.dataTransfer.types.indexOf('application/x-tb-char') !== -1 ||
@@ -694,10 +748,8 @@
               '<div class="tb-weapon-select-cat">' + cat + '</div>' +
               '<div class="tb-weapon-select-stats">' +
                 '<span class="tb-weapon-stat-atk">ATK ' + atk + '</span>' +
-                (subStat && subStat !== 'Unknown' ? ' <span class="tb-weapon-stat-sub">' + subStat + ' ' + subVal + '</span>' : '') +
+                (subStat && subStat !== 'Unknown' ? '<span class="tb-weapon-stat-sub">' + subStat + ' ' + subVal + '</span>' : '') +
               '</div>' +
-              (role ? '<div class="tb-weapon-select-role">' + role + '</div>' : '') +
-              (passive ? '<div class="tb-weapon-select-passive">' + passive + '</div>' : '') +
             '</div>' +
           '</div>';
       });

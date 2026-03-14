@@ -465,7 +465,11 @@
       return;
     }
 
-    /* Use html2canvas if available, otherwise use SVG-based approach */
+    /* Capture the exact rendered size of the canvas 1:1 */
+    var rect = canvasEl.getBoundingClientRect();
+    var renderW = Math.round(rect.width);
+    var renderH = Math.round(rect.height);
+
     if (typeof html2canvas !== 'undefined') {
       html2canvas(canvasEl, {
         backgroundColor: '#020617',
@@ -473,8 +477,14 @@
         useCORS: true,
         allowTaint: true,
         logging: false,
-        width: canvasEl.offsetWidth,
-        height: canvasEl.offsetHeight,
+        width: renderW,
+        height: renderH,
+        x: 0,
+        y: 0,
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: renderW,
+        windowHeight: renderH,
       }).then(function (canvas) {
         downloadCanvas(canvas);
       }).catch(function (err) {

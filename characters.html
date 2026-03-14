@@ -89,6 +89,57 @@
       color: var(--gold);
       background: rgba(240,192,64,0.08);
     }
+
+    /* ── Rarity Filter Row ── */
+    .rarity-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .rarity-filters button {
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      transition: 0.2s;
+      text-transform: uppercase;
+    }
+    .rarity-btn-all {
+      background: var(--dark3);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .rarity-btn-all:hover, .rarity-btn-all.active-rarity {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(240,192,64,0.08);
+    }
+    .rarity-btn-ssr {
+      background: rgba(250,204,21,0.08);
+      border: 2px solid rgba(250,204,21,0.3);
+      color: var(--ssr);
+    }
+    .rarity-btn-ssr:hover, .rarity-btn-ssr.active-rarity {
+      background: rgba(250,204,21,0.2);
+      border-color: var(--ssr);
+      color: #fff;
+      box-shadow: 0 0 12px rgba(250,204,21,0.3);
+    }
+    .rarity-btn-sr {
+      background: rgba(167,139,250,0.08);
+      border: 2px solid rgba(167,139,250,0.3);
+      color: var(--sr);
+    }
+    .rarity-btn-sr:hover, .rarity-btn-sr.active-rarity {
+      background: rgba(167,139,250,0.2);
+      border-color: var(--sr);
+      color: #fff;
+      box-shadow: 0 0 12px rgba(167,139,250,0.3);
+    }
     #charactersGrid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -255,6 +306,7 @@
       <li><a href="tierlist.html" data-i18n="nav_tierlist">&#127942; Tier List</a></li>
       <li><a href="events.html" data-i18n="nav_events">&#127881; Events</a></li>
       <li><a href="guides.html">&#128218; Guides</a></li>
+      <li><a href="team-builder.html">&#9881; Team Builder</a></li>
     </ul>
   </nav>
 
@@ -267,6 +319,11 @@
 
     <div class="container">
       <input id="searchInput" class="search-bar" placeholder="&#128269; Search a character..." data-i18n-placeholder="chars_search" oninput="applyFilters()">
+      <div class="rarity-filters" id="rarityFilters">
+        <button class="rarity-btn-all active-rarity" onclick="filterRarity('all',this)">All</button>
+        <button class="rarity-btn-ssr" onclick="filterRarity('SSR',this)">&#11088; SSR</button>
+        <button class="rarity-btn-sr" onclick="filterRarity('SR',this)">&#128156; SR</button>
+      </div>
       <div class="filters" id="filterButtons"></div>
       <div id="charactersGrid">
         <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-text"></div><div class="skeleton-text short"></div></div>
@@ -302,6 +359,7 @@
   <script src="js/weapon_icons_v2.js"></script>
   <script>
     var currentFilter = 'all';
+    var currentRarity = 'all';
     var allCharacters = [];
     var allWeapons = [];
 
@@ -407,10 +465,17 @@
     }
     function CT() { return (typeof CharTranslations !== 'undefined') ? CharTranslations : null; }
 
+    function filterRarity(rarity, btn) {
+      currentRarity = rarity;
+      document.querySelectorAll('.rarity-filters button').forEach(function(b) { b.classList.remove('active-rarity'); });
+      btn.classList.add('active-rarity');
+      applyFilters();
+    }
+
     function filterWeapon(type, btn) {
       currentFilter = type;
       document.querySelectorAll('.filters button').forEach(function(b) { b.classList.remove('active-filter'); });
-      btn.classList.add('active-filter');
+      if (btn) btn.classList.add('active-filter');
       applyFilters();
     }
 
@@ -421,9 +486,11 @@
       cards.forEach(function(card) {
         var name = (card.getAttribute('data-name') || '').toLowerCase();
         var types = (card.getAttribute('data-types') || '').toLowerCase();
+        var rarity = (card.getAttribute('data-rarity') || '').toUpperCase();
         var matchSearch = name.indexOf(search) !== -1;
         var matchFilter = currentFilter === 'all' || types.indexOf(currentFilter) !== -1;
-        var show = matchSearch && matchFilter;
+        var matchRarity = currentRarity === 'all' || rarity === currentRarity;
+        var show = matchSearch && matchFilter && matchRarity;
         card.style.display = show ? '' : 'none';
         if (show) visibleCount++;
       });
@@ -496,7 +563,7 @@
         var linkParam = 'slug=' + encodeURIComponent(c.slug);
         var imgUrl = c.image || 'https://placehold.co/300x400?text=No+Image';
 
-        html += '<a href="character.html?' + linkParam + '" class="card" data-name="' + charName + '" data-types="' + typesStr + '">';
+        html += '<a href="character.html?' + linkParam + '" class="card" data-name="' + charName + '" data-types="' + typesStr + '" data-rarity="' + (c.rarity || 'SR') + '">';
 
         /* Image wrapper with overlays */
         html += '<div class="card-img-wrap">';
