@@ -101,11 +101,25 @@
 
 /* ── Three-Panel Layout ── */
 .tb-layout {
-  display: grid;
-  grid-template-columns: 280px 1fr 300px;
-  height: calc(100vh - 64px - 120px - 52px);
-  min-height: 500px;
+  display: flex;
+  height: calc(100vh * 2.5);
+  min-height: 1400px;
   overflow: hidden;
+}
+
+.tb-left-panel {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.tb-center-panel {
+  flex: 1;
+  min-width: 0;
+}
+
+.tb-right-panel {
+  width: 340px;
+  flex-shrink: 0;
 }
 
 /* ── Left Panel: Community Builds ── */
@@ -280,14 +294,18 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  min-height: 0;
+  padding: 12px;
+  box-sizing: border-box;
 }
 
 .tb-canvas-area {
   flex: 1;
   position: relative;
   overflow: hidden;
-  min-height: 450px;
+  min-height: 300px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 12px;
+  border: 1px solid rgba(96,165,250,0.1);
 }
 
 /* Canvas grid background */
@@ -427,9 +445,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 16px;
-  background: rgba(2, 6, 23, 0.8);
-  border-top: 1px solid var(--border);
+  padding: 6px 16px;
+  background: rgba(2, 6, 23, 0.6);
+  border-top: 1px solid rgba(96,165,250,0.1);
   font-size: 11px;
   color: var(--muted);
   letter-spacing: 0.5px;
@@ -495,13 +513,21 @@
   background: linear-gradient(135deg, rgba(11, 16, 32, 0.97), rgba(15, 23, 42, 0.97));
   border: 1px solid rgba(240, 192, 64, 0.15);
   border-radius: 10px;
-  margin: 16px 0 0;
+  margin: 12px 0 0;
   padding: 0;
   overflow: hidden;
   transition: all 0.3s ease;
   position: relative;
   z-index: 10;
   flex-shrink: 0;
+  max-height: 250px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tb-synergy-content {
+  overflow-y: auto;
+  flex: 1;
 }
 
 .tb-synergy-header {
@@ -809,10 +835,10 @@
   position: absolute;
   inset: 0;
   overflow-y: auto;
-  padding: 8px;
+  padding: 6px;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
   align-content: start;
 }
 
@@ -838,14 +864,14 @@
 .tb-char-select-card {
   background: var(--dark3);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 8px;
   overflow: hidden;
   cursor: grab;
   transition: all 0.25s;
   text-align: center;
   user-select: none;
   -webkit-user-select: none;
-  max-width: 140px;
+  max-width: 110px;
   margin: 0 auto;
 }
 
@@ -867,20 +893,20 @@
 
 .tb-char-select-card img {
   width: 100%;
-  height: 100px;
+  height: 72px;
   object-fit: contain;
-  object-position: center;
+  object-position: center top;
   display: block;
   background: var(--dark2);
   pointer-events: none;
 }
 
 .tb-char-select-info {
-  padding: 6px 4px 2px;
+  padding: 4px 3px 1px;
 }
 
 .tb-char-select-name {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   color: var(--text);
   white-space: nowrap;
@@ -889,7 +915,7 @@
 }
 
 .tb-char-select-rarity {
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 700;
   margin-top: 1px;
 }
@@ -899,10 +925,10 @@
 
 .tb-char-select-types {
   font-family: 'Rajdhani', sans-serif;
-  font-size: 8px;
+  font-size: 7px;
   font-weight: 600;
   color: rgba(148, 163, 184, 0.5);
-  padding: 2px 4px 6px;
+  padding: 1px 3px 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -916,18 +942,21 @@
   background: rgba(240,192,64,0.03);
 }
 
-/* ── Weapon Selector Card (enhanced with drag + effects) ── */
+/* ── Weapon Selector Card (compact vertical card with icon) ── */
 .tb-weapon-select-card {
   background: var(--dark3);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 8px;
   overflow: hidden;
   cursor: grab;
-  transition: all 0.2s;
-  padding: 8px;
+  transition: all 0.25s;
+  text-align: center;
+  user-select: none;
+  -webkit-user-select: none;
+  max-width: 140px;
+  margin: 0 auto;
   display: flex;
-  align-items: flex-start;
-  gap: 8px;
+  flex-direction: column;
 }
 
 .tb-weapon-select-card:hover {
@@ -942,16 +971,18 @@
 }
 
 .tb-weapon-select-card img {
-  width: 44px;
-  height: 44px;
+  width: 100%;
+  height: 72px;
   object-fit: contain;
-  flex-shrink: 0;
-  border-radius: 6px;
-  background: rgba(15,23,42,0.5);
+  object-position: center;
+  display: block;
+  background: rgba(15,23,42,0.6);
+  pointer-events: none;
+  padding: 6px;
 }
 
 .tb-weapon-select-info {
-  flex: 1;
+  padding: 4px 5px 5px;
   min-width: 0;
 }
 
@@ -966,29 +997,37 @@
 }
 
 .tb-weapon-select-cat {
-  font-size: 9px;
+  font-size: 8px;
   color: var(--gold);
   letter-spacing: 0.5px;
   margin-top: 1px;
+  text-transform: uppercase;
 }
 
 .tb-weapon-select-stats {
   display: flex;
-  gap: 6px;
+  gap: 4px;
   margin-top: 2px;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .tb-weapon-stat-atk {
   font-size: 9px;
   font-weight: 700;
   color: #e2e8f0;
+  background: rgba(96,165,250,0.1);
+  padding: 1px 5px;
+  border-radius: 3px;
 }
 
 .tb-weapon-stat-sub {
   font-size: 8px;
   color: rgba(96,165,250,0.8);
   font-weight: 600;
+  background: rgba(96,165,250,0.06);
+  padding: 1px 4px;
+  border-radius: 3px;
 }
 
 .tb-weapon-select-role {
@@ -1267,33 +1306,41 @@
 
 /* ── Responsive ── */
 @media (max-width: 1100px) {
-  .tb-layout {
-    grid-template-columns: 240px 1fr 260px;
+  .tb-right-panel {
+    width: 300px;
+  }
+  .tb-selector-list {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 900px) {
   .tb-layout {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr auto;
+    flex-direction: column;
     height: auto;
     min-height: auto;
   }
 
   .tb-left-panel {
+    width: 100%;
     border-right: none;
     border-bottom: 1px solid var(--border);
     max-height: 250px;
   }
 
   .tb-center-panel {
-    min-height: 400px;
+    min-height: 500px;
   }
 
   .tb-right-panel {
+    width: 100%;
     border-left: none;
     border-top: 1px solid var(--border);
-    max-height: 350px;
+    max-height: 400px;
+  }
+
+  .tb-selector-list {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
