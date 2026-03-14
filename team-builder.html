@@ -1285,10 +1285,6 @@
       tbToast('Build loaded for editing. Make changes and Upload again when done.', 'info');
     }
 
-    /* ── Expose to global scope for onclick handlers ── */
-    window.loadCommunityBuild = loadCommunityBuild;
-    window.editCommunityBuild = editCommunityBuild;
-
     /* ── Wire up events ── */
     function initCommunityBuildsUI() {
       var btnUpload = document.getElementById('btnUploadBuild');
