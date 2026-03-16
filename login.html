@@ -56,7 +56,8 @@
   </div>
 
   <!-- Supabase CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-cdn.min.js"></script>
+  <script>if(typeof supabase==="undefined"){document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"><\/script>')};</script>
   <!-- Configuration and Client -->
   <script src="js/supabase-config.js"></script>
   <script src="js/supabase-client.js"></script>
