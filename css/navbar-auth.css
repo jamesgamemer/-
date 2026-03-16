@@ -135,12 +135,7 @@
   transform: translateY(0) scale(1);
 }
 
-.profile-menu-header {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 20px 20px 16px;
-}
+/* profile-menu-header styles moved below */
 
 .profile-menu-avatar {
   width: 48px;
@@ -220,6 +215,45 @@
 .profile-menu-item.logout-item:hover {
   background: rgba(248,113,113,0.08);
   color: #ef4444;
+}
+
+/* ── User Avatar (Google/Discord) ── */
+.nav-user-avatar {
+  border-color: #7c3aed;
+  background: linear-gradient(135deg, #2d1b69, #4c1d95);
+  color: #c4b5fd;
+  object-fit: cover;
+}
+
+.nav-user-avatar:hover {
+  box-shadow: 0 0 16px rgba(124,58,237,0.35);
+}
+
+img.nav-user-avatar {
+  padding: 0;
+}
+
+/* ── Admin Avatar ── */
+.nav-admin-avatar {
+  border-color: var(--gold);
+  background: linear-gradient(135deg, #1e3a5f, #0d1f4a);
+  color: var(--gold);
+}
+
+/* ── Profile Menu Header (updated) ── */
+.profile-menu-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 20px 12px;
+}
+
+.profile-menu-name {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #c4b5fd;
+  letter-spacing: 0.5px;
 }
 
 /* ── Old admin button styles (kept for backward compat) ── */
