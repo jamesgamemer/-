@@ -21,6 +21,7 @@ var SITE_URL = "https://jamesgamemer.github.io/jamesSS";
 var ADMIN_EMAILS = [
   "jamesgamemer@gmail.com",
   "jamesmerstudio@gmail.com"
+   "604501009@mcru.ac.th",
 ];
 
 // Check if configured
