@@ -1,5 +1,5 @@
 /* ============================================================
-   NAVBAR SYSTEM (Stable Version)
+   NAVBAR SYSTEM (v2 - Separate Admin/User Auth)
    ============================================================ */
 
 /* NAV MAP */
@@ -172,7 +172,14 @@ links.classList.toggle('open');
 
 
 /* ============================================================
-   AUTH MENU
+   AUTH MENU (v2 - Separate Admin and User)
+   
+   Logic:
+   1. Check if user is ADMIN (email/password + in ADMIN_EMAILS)
+      -> Show admin avatar with admin menu (Dashboard, Logout)
+   2. Else check if user is logged in via UserAuth (Google/Discord/Email)
+      -> Show user avatar with user menu (Profile info, Sign Out)
+   3. Else show Login button (for admin) + Sign In text
    ============================================================ */
 
 async function injectAuthUI(){
@@ -183,75 +190,143 @@ if(!navLinks||navLinks.querySelector('.nav-auth-item')) return;
 var li=document.createElement('li');
 li.className='nav-auth-item';
 
-var logged=false;
-var email='';
+/* ── Step 1: Check Admin ── */
+var isAdmin=false;
+var adminEmail='';
 
 if(typeof Auth!=='undefined'){
-try{
-
-logged=await Auth.isLoggedIn();
-
-if(logged&&typeof SupaDB!=='undefined'){
-var session=await SupaDB.getSession();
-
-if(session&&session.user){
-email=session.user.email||'';
-}
-}
-
-}catch(e){}
-}
-
-if(logged){
-
-var initial=email?email.charAt(0).toUpperCase():'A';
-
-li.innerHTML=
-'<div class="nav-profile-wrapper">'+
-'<button class="nav-profile-avatar" id="profileAvatarBtn">'+initial+'</button>'+
-'<div class="nav-profile-menu" id="profileMenu">'+
-'<a href="admin.html" class="profile-menu-item">📊 Dashboard</a>'+
-'<a href="characters.html" class="profile-menu-item">⚔ Characters</a>'+
-'<a href="tierlist.html" class="profile-menu-item">🏆 Tier List</a>'+
-'<a href="events.html" class="profile-menu-item">🎉 Events</a>'+
-'<a href="guides.html" class="profile-menu-item">📘 Guides</a>'+
-'<div class="profile-menu-divider"></div>'+
-'<button class="profile-menu-item logout-item" onclick="Auth.logout()">Logout</button>'+
-'</div>'+
-'</div>';
-
-navLinks.appendChild(li);
-
-var avatar=document.getElementById('profileAvatarBtn');
-var menu=document.getElementById('profileMenu');
-
-avatar.addEventListener('click',function(e){
-
-e.stopPropagation();
-menu.classList.toggle('open');
-
-});
-
-document.addEventListener('click',function(e){
-
-if(!menu.contains(e.target)&&e.target!==avatar){
-menu.classList.remove('open');
+  try{
+    isAdmin=await Auth.isLoggedIn();
+    if(isAdmin && typeof Auth.getAdminEmail === 'function'){
+      adminEmail = await Auth.getAdminEmail();
+    }
+    if(isAdmin && !adminEmail && typeof SupaDB!=='undefined'){
+      var session=await SupaDB.getSession();
+      if(session&&session.user){
+        adminEmail=session.user.email||'';
+      }
+    }
+  }catch(e){
+    console.warn('[Navbar] Admin check error:', e);
+  }
 }
 
-});
+if(isAdmin){
+  /* Admin UI: show admin avatar + admin menu */
+  var initial=adminEmail?adminEmail.charAt(0).toUpperCase():'A';
 
+  li.innerHTML=
+  '<div class="nav-profile-wrapper">'+
+  '<button class="nav-profile-avatar nav-admin-avatar" id="profileAvatarBtn" title="Admin: '+escNavHtml(adminEmail)+'">'+initial+'</button>'+
+  '<div class="nav-profile-menu" id="profileMenu">'+
+  '<div class="profile-menu-header">'+
+  '<span class="profile-menu-role">ADMIN</span>'+
+  '<span class="profile-menu-email">'+escNavHtml(adminEmail)+'</span>'+
+  '</div>'+
+  '<div class="profile-menu-divider"></div>'+
+  '<a href="admin.html" class="profile-menu-item">&#128202; Dashboard</a>'+
+  '<a href="characters.html" class="profile-menu-item">&#9876; Characters</a>'+
+  '<a href="tierlist.html" class="profile-menu-item">&#127942; Tier List</a>'+
+  '<a href="events.html" class="profile-menu-item">&#127881; Events</a>'+
+  '<a href="guides.html" class="profile-menu-item">&#128218; Guides</a>'+
+  '<div class="profile-menu-divider"></div>'+
+  '<button class="profile-menu-item logout-item" onclick="Auth.logout()">&#128682; Logout</button>'+
+  '</div>'+
+  '</div>';
+
+  navLinks.appendChild(li);
+  _bindProfileMenu();
+  return;
 }
-else{
 
+/* ── Step 2: Check User Auth (Google/Discord/Email signup) ── */
+var isUser=false;
+var userName='';
+var userAvatar='';
+
+if(typeof UserAuth!=='undefined'){
+  try{
+    /* UserAuth might not be initialized yet on non-team-builder pages */
+    /* Initialize it if Supabase is connected */
+    if(typeof SupaDB!=='undefined' && SupaDB.isConnected()){
+      await UserAuth.init();
+    }
+    isUser=UserAuth.isLoggedIn();
+    if(isUser){
+      userName=UserAuth.getDisplayName()||'User';
+      userAvatar=UserAuth.getAvatarUrl()||'';
+    }
+  }catch(e){
+    console.warn('[Navbar] UserAuth check error:', e);
+  }
+}
+
+if(isUser){
+  /* User UI: show user avatar + user menu */
+  var avatarHtml;
+  if(userAvatar){
+    avatarHtml='<img class="nav-profile-avatar nav-user-avatar" id="profileAvatarBtn" src="'+escNavHtml(userAvatar)+'" alt="'+escNavHtml(userName)+'" title="'+escNavHtml(userName)+'">';
+  } else {
+    var userInitial=userName?userName.charAt(0).toUpperCase():'U';
+    avatarHtml='<button class="nav-profile-avatar nav-user-avatar" id="profileAvatarBtn" title="'+escNavHtml(userName)+'">'+userInitial+'</button>';
+  }
+
+  li.innerHTML=
+  '<div class="nav-profile-wrapper">'+
+  avatarHtml+
+  '<div class="nav-profile-menu" id="profileMenu">'+
+  '<div class="profile-menu-header">'+
+  '<span class="profile-menu-name">'+escNavHtml(userName)+'</span>'+
+  '</div>'+
+  '<div class="profile-menu-divider"></div>'+
+  '<a href="team-builder.html" class="profile-menu-item">&#9881; Team Builder</a>'+
+  '<div class="profile-menu-divider"></div>'+
+  '<button class="profile-menu-item logout-item" id="navUserLogout">&#128682; Sign Out</button>'+
+  '</div>'+
+  '</div>';
+
+  navLinks.appendChild(li);
+  _bindProfileMenu();
+
+  /* Bind user logout */
+  var logoutBtn=document.getElementById('navUserLogout');
+  if(logoutBtn){
+    logoutBtn.addEventListener('click', async function(){
+      if(typeof UserAuth!=='undefined'){
+        await UserAuth.logout();
+        window.location.reload();
+      }
+    });
+  }
+  return;
+}
+
+/* ── Step 3: Not logged in - Show Login button ── */
 li.innerHTML=
 '<a href="login.html" class="nav-login-btn">'+
-'<span class="nav-login-icon">🔐</span> Login'+
+'<span class="nav-login-icon">&#128274;</span> Login'+
 '</a>';
 
 navLinks.appendChild(li);
 
 }
 
+/* ── Bind profile menu toggle ── */
+function _bindProfileMenu(){
+var avatar=document.getElementById('profileAvatarBtn');
+var menu=document.getElementById('profileMenu');
+if(!avatar||!menu) return;
+
+avatar.addEventListener('click',function(e){
+  e.stopPropagation();
+  menu.classList.toggle('open');
+});
+
+document.addEventListener('click',function(e){
+  if(!menu.contains(e.target)&&e.target!==avatar){
+    menu.classList.remove('open');
+  }
+});
 }
 
 
@@ -277,6 +352,12 @@ return I18n.getLang();
 
 return 'en';
 
+}
+
+function escNavHtml(str){
+var div=document.createElement('div');
+div.textContent=str||'';
+return div.innerHTML;
 }
 
 

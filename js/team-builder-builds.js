@@ -257,13 +257,20 @@
             '<input type="text" class="tb-modal-input" id="saveBuildName" placeholder="My Awesome Team" maxlength="50">' +
           '</div>' +
           '<div class="tb-modal-preview" id="saveBuildPreview"></div>' +
+          '<div class="tb-modal-section" style="display:flex;gap:8px;">' +
+            '<button class="tb-modal-btn btn-primary" id="saveBuildConfirm" style="flex:1;">\uD83D\uDCBE Save to Browser</button>' +
+            '<button class="tb-modal-btn" id="saveBuildCloud" style="flex:1;background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;border:1px solid #3b82f6;">\u2601 Save to Cloud</button>' +
+          '</div>' +
+          '<div id="cloudSaveStatus" style="text-align:center;font-size:11px;color:#64748b;margin-top:4px;"></div>' +
+          '<div class="tb-modal-divider"></div>' +
           '<div class="tb-modal-section">' +
-            '<button class="tb-modal-btn btn-primary" id="saveBuildConfirm">\uD83D\uDCBE Save to Browser</button>' +
+            '<div class="tb-modal-subtitle">\uD83D\uDCBB Browser Saves</div>' +
+            '<div class="tb-saved-builds-list" id="savedBuildsList"></div>' +
           '</div>' +
           '<div class="tb-modal-divider"></div>' +
           '<div class="tb-modal-section">' +
-            '<div class="tb-modal-subtitle">Saved Builds</div>' +
-            '<div class="tb-saved-builds-list" id="savedBuildsList"></div>' +
+            '<div class="tb-modal-subtitle">\u2601 Cloud Saves</div>' +
+            '<div class="tb-saved-builds-list" id="cloudBuildsList"></div>' +
           '</div>' +
         '</div>' +
       '</div>';
@@ -277,8 +284,11 @@
     var nameInput = document.getElementById('saveBuildName');
     var preview = document.getElementById('saveBuildPreview');
     var confirmBtn = document.getElementById('saveBuildConfirm');
+    var cloudBtn = document.getElementById('saveBuildCloud');
+    var cloudStatus = document.getElementById('cloudSaveStatus');
     var closeBtn = document.getElementById('saveModalClose');
     var listEl = document.getElementById('savedBuildsList');
+    var cloudListEl = document.getElementById('cloudBuildsList');
 
     /* Generate preview */
     var buildData = serializeBuild();
@@ -310,10 +320,22 @@
     var charNames = buildData.nodes.map(function (n) { return n.charName; });
     nameInput.value = charNames.slice(0, 3).join(' + ') + (charNames.length > 3 ? ' +' + (charNames.length - 3) : '');
 
-    /* Render saved builds list */
+    /* Render saved builds list (browser) */
     renderSavedBuildsList(listEl, allChars, allWeapons);
 
-    /* Confirm save */
+    /* Render cloud builds list */
+    renderCloudBuildsList(cloudListEl, allChars, allWeapons);
+
+    /* Update cloud save status */
+    if (cloudStatus) {
+      if (typeof UserAuth !== 'undefined' && UserAuth.isLoggedIn()) {
+        cloudStatus.innerHTML = '<span style="color:#22c55e;">\u2713 Signed in as ' + escHtml(UserAuth.getDisplayName()) + '</span>';
+      } else {
+        cloudStatus.innerHTML = '<span style="color:#f0c040;">Sign in to save builds to cloud</span>';
+      }
+    }
+
+    /* Confirm save (browser) */
     var newConfirm = confirmBtn.cloneNode(true);
     confirmBtn.parentNode.replaceChild(newConfirm, confirmBtn);
     newConfirm.addEventListener('click', function () {
@@ -321,11 +343,42 @@
       if (!name) { nameInput.focus(); return; }
       var entry = saveBuildToStorage(name, buildData);
       if (entry) {
-        showToast('Build "' + name + '" saved!', 'success');
+        showToast('Build "' + name + '" saved to browser!', 'success');
         renderSavedBuildsList(listEl, allChars, allWeapons);
         nameInput.value = '';
       }
     });
+
+    /* Cloud save */
+    if (cloudBtn) {
+      var newCloud = cloudBtn.cloneNode(true);
+      cloudBtn.parentNode.replaceChild(newCloud, cloudBtn);
+      newCloud.addEventListener('click', async function () {
+        if (typeof UserAuth === 'undefined' || !UserAuth.isLoggedIn()) {
+          showToast('Please sign in first to save to cloud!', 'warning');
+          if (typeof window.openLoginModal === 'function') window.openLoginModal();
+          return;
+        }
+        var name = nameInput.value.trim();
+        if (!name) { nameInput.focus(); return; }
+        newCloud.disabled = true;
+        newCloud.textContent = 'Saving...';
+        if (typeof window.saveUserBuildToSupabase === 'function') {
+          var ok = await window.saveUserBuildToSupabase(name, buildData);
+          if (ok) {
+            showToast('Build "' + name + '" saved to cloud!', 'success');
+            renderCloudBuildsList(cloudListEl, allChars, allWeapons);
+            nameInput.value = '';
+          } else {
+            showToast('Cloud save failed. Try again.', 'error');
+          }
+        } else {
+          showToast('Cloud save not available', 'error');
+        }
+        newCloud.disabled = false;
+        newCloud.textContent = '\u2601 Save to Cloud';
+      });
+    }
 
     /* Close */
     var newClose = closeBtn.cloneNode(true);
@@ -395,6 +448,79 @@
           deleteBuildFromStorage(buildId);
           renderSavedBuildsList(listEl, allChars, allWeapons);
           showToast('Build deleted', 'info');
+        }
+      });
+    });
+  }
+
+  /* ══════════════════════════════════════════════
+     CLOUD BUILDS LIST (Supabase user_builds)
+  ══════════════════════════════════════════════ */
+  async function renderCloudBuildsList(listEl, allChars, allWeapons) {
+    if (!listEl) return;
+
+    if (typeof UserAuth === 'undefined' || !UserAuth.isLoggedIn()) {
+      listEl.innerHTML = '<div class="tb-saved-empty" style="color:#64748b;">Sign in to access cloud saves</div>';
+      return;
+    }
+
+    listEl.innerHTML = '<div class="tb-saved-empty">Loading cloud builds...</div>';
+
+    var builds = [];
+    if (typeof window.loadUserBuilds === 'function') {
+      builds = await window.loadUserBuilds();
+    }
+
+    if (!builds || builds.length === 0) {
+      listEl.innerHTML = '<div class="tb-saved-empty">No cloud builds yet</div>';
+      return;
+    }
+
+    var html = '';
+    builds.forEach(function (b) {
+      var date = new Date(b.created_at).toLocaleDateString();
+      var chars = (b.char_names || []).join(', ');
+      html +=
+        '<div class="tb-saved-build-item" data-cloud-id="' + b.id + '">' +
+          '<div class="tb-saved-build-info">' +
+            '<div class="tb-saved-build-name" style="color:#a78bfa;">\u2601 ' + escHtml(b.name) + '</div>' +
+            '<div class="tb-saved-build-meta">' + (b.char_count || 0) + ' chars \u2022 ' + date + '</div>' +
+            '<div class="tb-saved-build-chars">' + escHtml(chars) + '</div>' +
+          '</div>' +
+          '<div class="tb-saved-build-actions">' +
+            '<button class="tb-saved-btn tb-saved-load" data-action="cloud-load" title="Load Build">\u25B6</button>' +
+            '<button class="tb-saved-btn tb-saved-delete" data-action="cloud-delete" title="Delete">\uD83D\uDDD1</button>' +
+          '</div>' +
+        '</div>';
+    });
+    listEl.innerHTML = html;
+
+    /* Bind events */
+    listEl.querySelectorAll('.tb-saved-build-item').forEach(function (item) {
+      var cloudId = item.getAttribute('data-cloud-id');
+
+      item.querySelector('[data-action="cloud-load"]').addEventListener('click', function (e) {
+        e.stopPropagation();
+        var build = builds.find(function (b) { return b.id === cloudId; });
+        if (build && build.build_data) {
+          loadBuildData(build.build_data, allChars, allWeapons);
+          showToast('Cloud build "' + build.name + '" loaded!', 'success');
+          var modal = document.getElementById('saveBuildModal');
+          if (modal) modal.classList.remove('active');
+        }
+      });
+
+      item.querySelector('[data-action="cloud-delete"]').addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (confirm('Delete this cloud build?')) {
+          if (typeof window.deleteUserBuild === 'function') {
+            window.deleteUserBuild(cloudId).then(function(ok) {
+              if (ok) {
+                renderCloudBuildsList(listEl, allChars, allWeapons);
+                showToast('Cloud build deleted', 'info');
+              }
+            });
+          }
         }
       });
     });

@@ -36,20 +36,27 @@ CREATE POLICY "Anyone can update tier list votes"
 
 
 -- ── Community Builds (Team Builder) ──
+-- Full community build sharing system with voting
 CREATE TABLE IF NOT EXISTS community_builds (
   id          UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   author_name TEXT NOT NULL DEFAULT 'Anonymous',
   title       TEXT NOT NULL DEFAULT 'My Build',
   description TEXT DEFAULT '',
   tag         TEXT DEFAULT 'GENERAL',   -- META, MAGIC, TANK, DPS, GENERAL
-  build_data  JSONB NOT NULL,           -- serialized build (nodes, edges, weapons)
+  build_data  JSONB NOT NULL,           -- serialized build { nodes: [...], edges: [...] }
   char_names  TEXT[] DEFAULT '{}',      -- array of character names for preview
   char_count  INT DEFAULT 0,
   char_images TEXT[] DEFAULT '{}',      -- array of character image URLs for preview
-  votes       INT DEFAULT 0,
+  votes       INT DEFAULT 0,            -- vote score (upvotes - downvotes)
   created_at  TIMESTAMPTZ DEFAULT now(),
   updated_at  TIMESTAMPTZ DEFAULT now()
 );
+
+-- Index for sorting by votes (top ranked builds)
+CREATE INDEX IF NOT EXISTS idx_community_builds_votes ON community_builds (votes DESC);
+
+-- Index for sorting by creation date
+CREATE INDEX IF NOT EXISTS idx_community_builds_created ON community_builds (created_at DESC);
 
 -- Enable RLS
 ALTER TABLE community_builds ENABLE ROW LEVEL SECURITY;
