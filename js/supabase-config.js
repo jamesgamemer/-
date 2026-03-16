@@ -11,17 +11,16 @@
 var SUPABASE_URL = "https://gzlkdxigiejwwxewyikq.supabase.co";
 var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6bGtkeGlnaWVqd3d4ZXd5aWtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5NjU2NzMsImV4cCI6MjA4ODU0MTY3M30.62lXidTteew5WB2r3kmm6zqBVHB_6AHLz-vWwj3rRrs";
 
-// Site URL for OAuth redirects (GitHub Pages)
+// Site URL for OAuth redirects
 // IMPORTANT: Update this if you move the site to a different URL
-var SITE_URL = "https://jamesgamemer.github.io/jamesSS";
+var SITE_URL = "https://kangseang.com";
 
 // Admin email whitelist
 // IMPORTANT: Only these emails can access admin.html dashboard
 // Add your admin emails here
 var ADMIN_EMAILS = [
-  "jamesgamemer@gmail.com",
-  "jamesmerstudio@gmail.com"
-   "604501009@mcru.ac.th",
+  "sarutjames@gmail.com",
+  "604501009@mcru.ac.th"
 ];
 
 // Check if configured
