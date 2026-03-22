@@ -216,6 +216,36 @@ var SupaDB = (function () {
     if (error) console.error("[SupaDB] Storage delete error:", error.message);
   }
 
+  async function uploadCostumeImage(file, characterSlug, index) {
+    if (!_client) return { error: { message: 'Not connected' } };
+    const ext = file.name.split('.').pop() || 'png';
+    const filePath = 'costumes/' + characterSlug + '-costume-' + index + '-' + Date.now() + '.' + ext;
+    const { data, error } = await _client.storage
+      .from('character-images')
+      .upload(filePath, file, { cacheControl: '3600', upsert: true });
+    if (error) {
+      console.error("[SupaDB] Costume image upload error:", error.message);
+      return { error, url: null };
+    }
+    const { data: urlData } = _client.storage.from('character-images').getPublicUrl(filePath);
+    return { error: null, url: urlData.publicUrl };
+  }
+
+  async function uploadMaterialImage(file, characterSlug, index) {
+    if (!_client) return { error: { message: 'Not connected' } };
+    const ext = file.name.split('.').pop() || 'png';
+    const filePath = 'materials/' + characterSlug + '-material-' + index + '-' + Date.now() + '.' + ext;
+    const { data, error } = await _client.storage
+      .from('character-images')
+      .upload(filePath, file, { cacheControl: '3600', upsert: true });
+    if (error) {
+      console.error("[SupaDB] Material image upload error:", error.message);
+      return { error, url: null };
+    }
+    const { data: urlData } = _client.storage.from('character-images').getPublicUrl(filePath);
+    return { error: null, url: urlData.publicUrl };
+  }
+
   // ============================================================
   // REALTIME - Subscriptions
   // ============================================================
@@ -259,6 +289,8 @@ var SupaDB = (function () {
     bulkImport,
     uploadImage,
     deleteImage,
+    uploadCostumeImage,
+    uploadMaterialImage,
     subscribeToChanges,
     unsubscribe
   };
