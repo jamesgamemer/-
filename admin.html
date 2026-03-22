@@ -1264,7 +1264,17 @@ function filterWeaponList(){
       if(c.image){document.getElementById('previewImg').src=c.image;document.getElementById('previewImg').style.display='';document.getElementById('imagePrompt').style.display='none'}
       else{document.getElementById('previewImg').style.display='none';document.getElementById('imagePrompt').style.display=''}
       tempSkills=JSON.parse(JSON.stringify(c.skills||{}));
-      tempPotentials=JSON.parse(JSON.stringify(c.potentials||{}));
+      /* Normalize potentials: Supabase stores as Array [{tier:1,description:"..."}], editor needs Object {tier1:"..."} */
+      tempPotentials={};
+      var rawPots=c.potentials||{};
+      for(var pw in rawPots){
+        if(Array.isArray(rawPots[pw])){
+          tempPotentials[pw]={};
+          rawPots[pw].forEach(function(p){if(p.tier)tempPotentials[pw]['tier'+p.tier]=p.description||''});
+        }else{
+          tempPotentials[pw]=JSON.parse(JSON.stringify(rawPots[pw]));
+        }
+      }
       buildWeaponToggles(c.types||[]);
       updateSkillsTabs();updatePotentialsTabs();
       document.getElementById('costumesEditor').innerHTML='';
@@ -1446,7 +1456,16 @@ function filterWeaponList(){
           if(mImg)mObj.image=mImg;
           materials.push(mObj);
         }
-        var charData={name_en:name,slug:slug,rarity:document.getElementById('charRarity').value,tier:document.getElementById('charTier').value,description:document.getElementById('charDesc').value,types:types,skills:tempSkills,potentials:tempPotentials,costumes:costumes,materials:materials};
+        /* Convert potentials back from Object {tier1:"..."} to Array [{tier:1,description:"..."}] for Supabase/character.html */
+        var finalPotentials={};
+        for(var pw in tempPotentials){
+          finalPotentials[pw]=[];
+          for(var t=1;t<=10;t++){
+            var desc=tempPotentials[pw]['tier'+t];
+            if(desc&&desc.trim()!=='')finalPotentials[pw].push({tier:t,description:desc.trim()});
+          }
+        }
+        var charData={name_en:name,slug:slug,rarity:document.getElementById('charRarity').value,tier:document.getElementById('charTier').value,description:document.getElementById('charDesc').value,types:types,skills:tempSkills,potentials:finalPotentials,costumes:costumes,materials:materials};
         if(tempImageFile&&SupaDB.isConnected()){
           try{var upload=await SupaDB.uploadImage(tempImageFile,slug);if(!upload.error&&upload.url)charData.image=upload.url}catch(ue){console.warn('Image upload failed:',ue)}
         }else if(editingId){var ex=allCharacters.find(x=>x.id===editingId);if(ex)charData.image=ex.image||null}
