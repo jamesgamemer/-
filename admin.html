@@ -99,6 +99,22 @@
     .font-control-row select{padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:var(--dark3);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:13px}
     .font-preview{padding:16px;border:1px solid var(--border);border-radius:8px;background:var(--dark2);margin-top:12px;min-height:40px}
     .wpn-stat-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;background:rgba(240,192,64,.1);color:var(--gold);border:1px solid rgba(240,192,64,.2)}
+    /* ── Mini Rich Text Toolbar ── */
+    .mini-rt-wrap{position:relative}
+    .mini-rt-toolbar{display:flex;flex-wrap:wrap;gap:3px;padding:5px 6px;background:var(--dark2);border:1px solid var(--border);border-bottom:none;border-radius:8px 8px 0 0}
+    .mini-rt-toolbar .rt-btn{width:28px;height:28px;border:1px solid transparent;border-radius:5px;background:transparent;color:var(--muted);font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:'Rajdhani',sans-serif;font-weight:700}
+    .mini-rt-toolbar .rt-btn:hover{background:rgba(240,192,64,.1);color:var(--gold);border-color:var(--border)}
+    .mini-rt-toolbar .rt-btn.active{background:rgba(240,192,64,.15);color:var(--gold);border-color:var(--gold)}
+    .mini-rt-toolbar .rt-sep{width:1px;height:20px;background:var(--border);margin:4px 2px;align-self:center}
+    .mini-rt-toolbar .rt-color-wrap{position:relative;display:flex;align-items:center}
+    .mini-rt-toolbar .rt-color-wrap input[type="color"]{position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;cursor:pointer}
+    .mini-rt-editable{width:100%;min-height:48px;padding:8px 10px;border:1px solid var(--border);border-radius:0 0 6px 6px;background:var(--dark3);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:13px;outline:none;overflow-y:auto;max-height:150px;box-sizing:border-box;line-height:1.5}
+    .mini-rt-editable:focus{border-color:var(--gold)}
+    .mini-rt-editable:empty:before{content:attr(data-placeholder);color:var(--muted);pointer-events:none}
+    .mini-rt-case-menu{position:absolute;top:100%;left:0;background:var(--dark2);border:1px solid var(--border);border-radius:6px;padding:4px;z-index:100;display:none;min-width:140px;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+    .mini-rt-case-menu.open{display:block}
+    .mini-rt-case-menu button{display:block;width:100%;text-align:left;padding:6px 10px;border:none;border-radius:4px;background:transparent;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;cursor:pointer}
+    .mini-rt-case-menu button:hover{background:rgba(240,192,64,.1);color:var(--gold)}
   </style>
 </head>
 <body>
@@ -398,7 +414,7 @@
             <div class="cms-section" id="sec-costumes">
               <div class="cms-section-header"><div class="cms-section-num">5</div><h3>Costumes</h3></div>
               <div class="cms-section-body">
-                <p class="form-hint">Add costumes with name, image, and optional description (supports <b>bold</b> using **text**)</p>
+                <p class="form-hint">Add costumes with name, image, and optional description (supports <b>bold</b>, <b>color</b>, and <b>text case</b> formatting)</p>
                 <div id="costumesEditor"></div>
                 <button type="button" class="btn-add-item" onclick="addCostumeField()" style="margin-top:12px;">+ Add Costume</button>
               </div>
@@ -1239,7 +1255,7 @@ function filterWeaponList(){
       tempImageFile=null;
       document.getElementById('previewImg').style.display='none';
       document.getElementById('imagePrompt').style.display='';
-      tempSkills={};tempPotentials={};
+      tempSkills={};tempPotentials={};costumeRTCounter=0;
       buildWeaponToggles([]);
       document.getElementById('skillsEditor').innerHTML='';
       document.getElementById('potentialsEditor').innerHTML='';
@@ -1264,17 +1280,8 @@ function filterWeaponList(){
       if(c.image){document.getElementById('previewImg').src=c.image;document.getElementById('previewImg').style.display='';document.getElementById('imagePrompt').style.display='none'}
       else{document.getElementById('previewImg').style.display='none';document.getElementById('imagePrompt').style.display=''}
       tempSkills=JSON.parse(JSON.stringify(c.skills||{}));
-      /* Normalize potentials: Supabase stores as Array [{tier:1,description:"..."}], editor needs Object {tier1:"..."} */
-      tempPotentials={};
-      var rawPots=c.potentials||{};
-      for(var pw in rawPots){
-        if(Array.isArray(rawPots[pw])){
-          tempPotentials[pw]={};
-          rawPots[pw].forEach(function(p){if(p.tier)tempPotentials[pw]['tier'+p.tier]=p.description||''});
-        }else{
-          tempPotentials[pw]=JSON.parse(JSON.stringify(rawPots[pw]));
-        }
-      }
+      tempPotentials=JSON.parse(JSON.stringify(c.potentials||{}));
+      costumeRTCounter=0;
       buildWeaponToggles(c.types||[]);
       updateSkillsTabs();updatePotentialsTabs();
       document.getElementById('costumesEditor').innerHTML='';
@@ -1305,6 +1312,72 @@ function filterWeaponList(){
     function toggleWeaponType(el){el.classList.toggle('selected');updateSkillsTabs();updatePotentialsTabs()}
     function getSelectedWeapons(){var r=[];document.querySelectorAll('.weapon-toggle.selected').forEach(w=>r.push(w.textContent));return r}
 
+    /* ── Mini Rich Text Editor Helper ── */
+    function createMiniRichText(containerId, initialHTML, onChangeCb, placeholder){
+      var wrap=document.createElement('div');wrap.className='mini-rt-wrap';
+      var toolbar=document.createElement('div');toolbar.className='mini-rt-toolbar';
+      /* Bold */
+      var bBtn=document.createElement('button');bBtn.type='button';bBtn.className='rt-btn';bBtn.innerHTML='<b>B</b>';bBtn.title='Bold';
+      bBtn.onclick=function(){document.execCommand('bold',false,null);editable.focus();onChangeCb(editable.innerHTML)};toolbar.appendChild(bBtn);
+      /* Italic */
+      var iBtn=document.createElement('button');iBtn.type='button';iBtn.className='rt-btn';iBtn.innerHTML='<i>I</i>';iBtn.title='Italic';
+      iBtn.onclick=function(){document.execCommand('italic',false,null);editable.focus();onChangeCb(editable.innerHTML)};toolbar.appendChild(iBtn);
+      /* Underline */
+      var uBtn=document.createElement('button');uBtn.type='button';uBtn.className='rt-btn';uBtn.innerHTML='<u>U</u>';uBtn.title='Underline';
+      uBtn.onclick=function(){document.execCommand('underline',false,null);editable.focus();onChangeCb(editable.innerHTML)};toolbar.appendChild(uBtn);
+      /* Separator */
+      var sep1=document.createElement('div');sep1.className='rt-sep';toolbar.appendChild(sep1);
+      /* Text Color */
+      var colorWrap=document.createElement('div');colorWrap.className='rt-color-wrap';
+      var colorBtn=document.createElement('button');colorBtn.type='button';colorBtn.className='rt-btn';colorBtn.innerHTML='<span style="border-bottom:3px solid var(--gold)">A</span>';colorBtn.title='Text Color';
+      var colorInput=document.createElement('input');colorInput.type='color';colorInput.value='#f0c040';
+      colorInput.addEventListener('input',function(){document.execCommand('foreColor',false,colorInput.value);editable.focus();onChangeCb(editable.innerHTML)});
+      colorWrap.appendChild(colorBtn);colorWrap.appendChild(colorInput);toolbar.appendChild(colorWrap);
+      /* Separator */
+      var sep2=document.createElement('div');sep2.className='rt-sep';toolbar.appendChild(sep2);
+      /* Text Case (uppercase / lowercase / capitalize) */
+      var caseWrap=document.createElement('div');caseWrap.style.cssText='position:relative;display:inline-block;';
+      var caseBtn=document.createElement('button');caseBtn.type='button';caseBtn.className='rt-btn';caseBtn.innerHTML='Aa';caseBtn.title='Text Case';
+      var caseMenu=document.createElement('div');caseMenu.className='mini-rt-case-menu';
+      var cases=[{label:'UPPERCASE',transform:'uppercase'},{label:'lowercase',transform:'lowercase'},{label:'Capitalize',transform:'capitalize'},{label:'Normal',transform:'none'}];
+      cases.forEach(function(c){
+        var cb=document.createElement('button');cb.type='button';cb.textContent=c.label;
+        cb.onclick=function(){
+          var sel=window.getSelection();
+          if(sel.rangeCount>0&&!sel.isCollapsed){
+            var range=sel.getRangeAt(0);
+            var span=document.createElement('span');
+            span.style.textTransform=c.transform;
+            try{range.surroundContents(span)}catch(e){span.appendChild(range.extractContents());range.insertNode(span)}
+          }
+          caseMenu.classList.remove('open');
+          editable.focus();onChangeCb(editable.innerHTML);
+        };
+        caseMenu.appendChild(cb);
+      });
+      caseBtn.onclick=function(e){e.stopPropagation();caseMenu.classList.toggle('open')};
+      document.addEventListener('click',function(){caseMenu.classList.remove('open')});
+      caseWrap.appendChild(caseBtn);caseWrap.appendChild(caseMenu);toolbar.appendChild(caseWrap);
+      /* Separator */
+      var sep3=document.createElement('div');sep3.className='rt-sep';toolbar.appendChild(sep3);
+      /* Remove Formatting */
+      var clearBtn=document.createElement('button');clearBtn.type='button';clearBtn.className='rt-btn';clearBtn.innerHTML='&#10006;';clearBtn.title='Remove Formatting';
+      clearBtn.onclick=function(){document.execCommand('removeFormat',false,null);editable.focus();onChangeCb(editable.innerHTML)};toolbar.appendChild(clearBtn);
+      wrap.appendChild(toolbar);
+      /* Editable area */
+      var editable=document.createElement('div');editable.className='mini-rt-editable';editable.contentEditable='true';
+      if(placeholder)editable.setAttribute('data-placeholder',placeholder);
+      editable.innerHTML=initialHTML||'';
+      editable.addEventListener('input',function(){onChangeCb(editable.innerHTML)});
+      editable.addEventListener('paste',function(e){
+        /* Allow paste but keep formatting */
+      });
+      wrap.appendChild(editable);
+      var container=document.getElementById(containerId);
+      if(container){container.innerHTML='';container.appendChild(wrap);}
+      return {wrap:wrap,editable:editable};
+    }
+
     /* ── Skills Editor ── */
     function updateSkillsTabs(){
       var ws=getSelectedWeapons(),tabs=document.getElementById('weaponSkillsTabs'),h='';
@@ -1324,12 +1397,17 @@ function filterWeaponList(){
         h+='<div class="form-group"><label>Skill Name</label><input type="text" value="'+(s.name||'').replace(/"/g,'&quot;')+'" onchange="updateSkillField(\''+w.replace(/'/g,"\\'")+'\','+i+',\'name\',this.value)"></div>';
         h+='<div class="form-group"><label>Type</label><select onchange="updateSkillField(\''+w.replace(/'/g,"\\'")+'\','+i+',\'type\',this.value)">';
         SKILL_TYPES.forEach(function(t){h+='<option'+(t===s.type?' selected':'')+'>'+t+'</option>'});h+='</select></div>';
-        h+='<div class="form-group"><label>Description</label><textarea rows="2" onchange="updateSkillField(\''+w.replace(/'/g,"\\'")+'\','+i+',\'description\',this.value)">'+(s.description||'')+'</textarea></div>';
+        h+='<div class="form-group"><label>Description</label><div id="skillDescRT_'+w.replace(/[^a-zA-Z0-9]/g,'_')+'_'+i+'"></div></div>';
         h+='<div style="text-align:right;"><button class="btn-remove-item" onclick="removeSkill(\''+w.replace(/'/g,"\\'")+'\','+i+')">&times;</button></div>';
         h+='</div></div>';
       });
       h+='<button class="btn-add-item" onclick="addSkill(\''+w.replace(/'/g,"\\'")+'\')">+ Add Skill</button>';
       document.getElementById('skillsEditor').innerHTML=h;
+      /* Attach rich text editors to each skill description */
+      skills.forEach(function(s,i){
+        var cid='skillDescRT_'+w.replace(/[^a-zA-Z0-9]/g,'_')+'_'+i;
+        createMiniRichText(cid,s.description||'',function(html){updateSkillField(w,i,'description',html)},'Enter skill description...');
+      });
     }
     function toggleSkillExpand(hdr){var b=hdr.nextElementSibling,a=hdr.querySelector('.expand-arrow');b.classList.toggle('open');a.classList.toggle('open')}
     function addSkill(w){if(!tempSkills[w])tempSkills[w]=[];tempSkills[w].push({name:'',type:'Skill',description:''});renderSkillsForWeapon(w)}
@@ -1345,14 +1423,32 @@ function filterWeaponList(){
     }
     function switchPotTab(btn,w){document.querySelectorAll('#weaponPotentialsTabs .weapon-tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');currentPotWeapon=w;renderPotentialsForWeapon(w)}
     function renderPotentialsForWeapon(w){
-      var pots=tempPotentials[w]||{};var h='<div class="potentials-grid-cms">';
-      for(var t=1;t<=10;t++){var k='tier'+t;h+='<div class="pot-card-cms"><label>Tier '+t+'</label><textarea rows="2" onchange="updatePotField(\''+w.replace(/'/g,"\\'")+'\',\''+k+'\',this.value)">'+(pots[k]||'')+'</textarea></div>'}
+      /* Support both array [{tier,description}] and legacy object {tier1:"..."} */
+      var raw=tempPotentials[w];
+      var potsArr=[];
+      if(Array.isArray(raw)){
+        potsArr=raw;
+      }else if(raw&&typeof raw==='object'){
+        for(var t=1;t<=10;t++){var k='tier'+t;if(raw[k])potsArr.push({tier:t,description:raw[k]})}
+      }
+      /* Ensure 10 tiers */
+      while(potsArr.length<10)potsArr.push({tier:potsArr.length+1,description:''});
+      /* Store normalized array back */
+      tempPotentials[w]=potsArr;
+      var h='<div class="potentials-grid-cms">';
+      for(var t=0;t<10;t++){h+='<div class="pot-card-cms"><label>Tier '+(t+1)+'</label><textarea rows="2" oninput="updatePotField(\''+w.replace(/'/g,"\\'")+'\','+t+',this.value)">'+((potsArr[t]&&potsArr[t].description)||'')+'</textarea></div>'}
       h+='</div>';document.getElementById('potentialsEditor').innerHTML=h;
     }
-    function updatePotField(w,k,v){if(!tempPotentials[w])tempPotentials[w]={};tempPotentials[w][k]=v}
+    function updatePotField(w,idx,v){
+      if(!tempPotentials[w])tempPotentials[w]=[];
+      while(tempPotentials[w].length<=idx)tempPotentials[w].push({tier:tempPotentials[w].length+1,description:''});
+      tempPotentials[w][idx].description=v;
+    }
 
-    /* ── Costumes (Enhanced with description) ── */
+    /* ── Costumes (Enhanced with description + Rich Text) ── */
+    var costumeRTCounter=0;
     function addCostumeField(name,image,desc){
+      var rtId='costumeDescRT_'+(costumeRTCounter++);
       var d=document.createElement('div');d.className='costume-item-cms-v2';
       d.innerHTML='<div class="costume-item-row1">'+
         '<input type="text" class="costume-input" value="'+(name||'').replace(/"/g,'&quot;')+'" placeholder="Costume name" style="flex:1;min-width:120px;">'+
@@ -1361,9 +1457,14 @@ function filterWeaponList(){
         '<input type="text" class="costume-image-url" value="'+(image||'').replace(/"/g,'&quot;')+'" placeholder="or paste image URL" style="flex:1;min-width:120px;">'+
         '<img class="costume-thumb" src="'+(image||'')+'" style="width:40px;height:40px;border-radius:6px;object-fit:cover;'+(image?'':'display:none;')+'">'+
         '<button class="btn-remove-item" onclick="this.closest(\'.costume-item-cms-v2\').remove();">&times;</button></div>'+
-        '<div class="costume-item-row2">'+
-        '<textarea class="costume-desc" rows="2" placeholder="Description (optional, use **bold** for emphasis)">'+(desc||'')+'</textarea></div>';
+        '<div class="costume-item-row2"><div id="'+rtId+'"></div></div>';
       document.getElementById('costumesEditor').appendChild(d);
+      /* Attach rich text editor */
+      var rt=createMiniRichText(rtId,desc||'',function(html){
+        /* Store in a hidden data attribute for save */
+        d.setAttribute('data-desc-html',html);
+      },'Description (optional, supports formatting)');
+      d.setAttribute('data-desc-html',desc||'');
     }
     function previewCostumeImg(inp){
       if(inp.files&&inp.files[0]){
@@ -1433,7 +1534,7 @@ function filterWeaponList(){
             try{var cUpload=await SupaDB.uploadCostumeImage(imgFile,slug,ci);if(!cUpload.error&&cUpload.url)img=cUpload.url;}catch(ce){console.warn('Costume image upload failed:',ce);}
           }
           if(!img){var imgThumb=card.querySelector('.costume-thumb');if(imgThumb&&imgThumb.style.display!=='none'&&imgThumb.src&&!imgThumb.src.startsWith('data:'))img=imgThumb.src;}
-          var desc=card.querySelector('.costume-desc').value.trim();
+          var desc=(card.getAttribute('data-desc-html')||'').trim();
           var obj={name:n};
           if(img)obj.image=img;
           if(desc)obj.description=desc;
@@ -1456,16 +1557,7 @@ function filterWeaponList(){
           if(mImg)mObj.image=mImg;
           materials.push(mObj);
         }
-        /* Convert potentials back from Object {tier1:"..."} to Array [{tier:1,description:"..."}] for Supabase/character.html */
-        var finalPotentials={};
-        for(var pw in tempPotentials){
-          finalPotentials[pw]=[];
-          for(var t=1;t<=10;t++){
-            var desc=tempPotentials[pw]['tier'+t];
-            if(desc&&desc.trim()!=='')finalPotentials[pw].push({tier:t,description:desc.trim()});
-          }
-        }
-        var charData={name_en:name,slug:slug,rarity:document.getElementById('charRarity').value,tier:document.getElementById('charTier').value,description:document.getElementById('charDesc').value,types:types,skills:tempSkills,potentials:finalPotentials,costumes:costumes,materials:materials};
+        var charData={name_en:name,slug:slug,rarity:document.getElementById('charRarity').value,tier:document.getElementById('charTier').value,description:document.getElementById('charDesc').value,types:types,skills:tempSkills,potentials:tempPotentials,costumes:costumes,materials:materials};
         if(tempImageFile&&SupaDB.isConnected()){
           try{var upload=await SupaDB.uploadImage(tempImageFile,slug);if(!upload.error&&upload.url)charData.image=upload.url}catch(ue){console.warn('Image upload failed:',ue)}
         }else if(editingId){var ex=allCharacters.find(x=>x.id===editingId);if(ex)charData.image=ex.image||null}

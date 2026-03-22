@@ -314,6 +314,15 @@
       return t;
     }
 
+    /* Render description that may contain HTML from rich text editor */
+    function renderRichDesc(text) {
+      if (!text) return '';
+      /* If text contains HTML tags, render as-is (from rich text editor) */
+      if (/<[a-z][\s\S]*>/i.test(text)) return text;
+      /* Otherwise use legacy highlightNums */
+      return highlightNums(text);
+    }
+
     function extractHits(desc) {
       var hits = [];
       var pattern = /(\d+(?:st|nd|rd|th)\s+hit:\s*\d+(?:\.\d+)?%)/gi;
@@ -547,7 +556,7 @@
         html += '<div class="costume-card-body">';
         html += '<div class="costume-card-name">' + esc(displayName) + '</div>';
         if (desc) {
-          html += '<div class="costume-card-desc">' + renderBold(desc) + '</div>';
+          html += '<div class="costume-card-desc">' + renderRichDesc(desc) + '</div>';
         }
         html += '</div></div>';
       });
@@ -713,7 +722,7 @@
 
         html += '<div class="skill-card-v2' + (isUlt ? ' ultimate-card' : '') + '">';
         html += '<div class="skill-header"><div class="skill-name">' + esc(sk.name) + '</div><span class="skill-type-badge ' + badge + '">' + esc(displayType) + '</span></div>';
-        if (extracted.clean) html += '<div class="skill-desc">' + highlightNums(extracted.clean) + '</div>';
+        if (extracted.clean) html += '<div class="skill-desc">' + renderRichDesc(extracted.clean) + '</div>';
         if (extracted.hits.length > 0) {
           html += '<div class="dmg-breakdown">';
           extracted.hits.forEach(function(h) {
