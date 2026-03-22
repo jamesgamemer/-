@@ -496,6 +496,96 @@
       carousel.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
     }
 
+    /* ---- Bold text helper: convert **text** to <b>text</b> ---- */
+    function renderBold(text) {
+      if (!text) return '';
+      var t = esc(text);
+      /* Convert **bold** markers */
+      t = t.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+      /* Also highlight numbers like 300/400/500 and percentages */
+      t = t.replace(/(\d+(?:\.\d+)?%)/g, '<span class="hl-num">$1</span>');
+      t = t.replace(/(\d+)\s*(sec\b)/g, '<span class="hl-dur">$1 $2</span>');
+      return t;
+    }
+
+    /* ---- Build Costumes Section (Enhanced card layout) ---- */
+    function buildCostumesSection(c, charDisplayName) {
+      var costumesArr = c.costumes || [];
+      /* Filter: only show items that have at least a name */
+      var validCostumes = costumesArr.filter(function(cos) {
+        return (typeof cos === 'string' && cos.trim()) || (typeof cos === 'object' && cos.name);
+      });
+      if (validCostumes.length === 0) return '';
+
+      var ct = CT();
+      var currentLang = lang();
+      var lblCostumes = (ct) ? ct.getUILabel('Costumes', currentLang) : 'Costumes';
+
+      var html = '<div class="costumes-section-v3">';
+      html += '<div class="detail-section-title">' + esc(charDisplayName) + ' ' + esc(lblCostumes) + '</div>';
+      html += '<div class="costumes-grid-v3">';
+
+      validCostumes.forEach(function(cos) {
+        var nameEn = (typeof cos === 'string') ? cos : (cos.name || '');
+        var img = (typeof cos === 'object' && cos.image) ? cos.image : '';
+        var desc = (typeof cos === 'object' && cos.description) ? cos.description : '';
+
+        /* Translate costume name */
+        var displayName = nameEn;
+        if (ct && currentLang === 'th') {
+          displayName = ct.getCostumeName(nameEn, 'th');
+        }
+
+        html += '<div class="costume-card-v3">';
+        if (img) {
+          html += '<div class="costume-card-img-wrap">';
+          html += '<img src="' + esc(img) + '" alt="' + esc(displayName) + '" class="costume-card-portrait" onerror="this.style.display=\'none\'">';
+          html += '</div>';
+        } else {
+          html += '<div class="costume-card-img-wrap costume-card-placeholder"><span>&#128090;</span></div>';
+        }
+        html += '<div class="costume-card-body">';
+        html += '<div class="costume-card-name">' + esc(displayName) + '</div>';
+        if (desc) {
+          html += '<div class="costume-card-desc">' + renderBold(desc) + '</div>';
+        }
+        html += '</div></div>';
+      });
+
+      html += '</div></div>';
+      return html;
+    }
+
+    /* ---- Build Materials Section ---- */
+    function buildMaterialsSection(c, charDisplayName) {
+      var materialsArr = c.materials || [];
+      if (!Array.isArray(materialsArr) || materialsArr.length === 0) return '';
+
+      var validMaterials = materialsArr.filter(function(m) {
+        return m && typeof m === 'object' && m.name;
+      });
+      if (validMaterials.length === 0) return '';
+
+      var html = '<div class="materials-section">';
+      html += '<div class="detail-section-title">' + esc(charDisplayName) + ' Upgrade Materials</div>';
+      html += '<div class="materials-grid">';
+
+      validMaterials.forEach(function(mat) {
+        var img = mat.image || '';
+        html += '<div class="material-card">';
+        if (img) {
+          html += '<img src="' + esc(img) + '" alt="' + esc(mat.name) + '" class="material-icon" onerror="this.src=\'https://placehold.co/32x32/111827/666?text=?\'">'; 
+        } else {
+          html += '<div class="material-icon-placeholder">&#127793;</div>';
+        }
+        html += '<span class="material-name">' + esc(mat.name) + '</span>';
+        html += '</div>';
+      });
+
+      html += '</div></div>';
+      return html;
+    }
+
     // ---- Render Functions ----
     function renderPage(c) {
       charData = c;
@@ -562,6 +652,12 @@
 
       /* ── Recommended Weapons Section ── */
       html += buildRecommendedWeapons(c);
+
+      /* ── Costumes Section (New Enhanced) ── */
+      html += buildCostumesSection(c, charDisplayName);
+
+      /* ── Materials Section (New) ── */
+      html += buildMaterialsSection(c, charDisplayName);
 
       if (hasSkills && weaponKeys.length > 0) {
         html += '<div class="weapon-tabs-wrapper"><div class="weapon-tabs">';
@@ -642,26 +738,7 @@
         html += '</div></div>';
       }
 
-      /* Costumes section */
-      if (costumesArr.length > 0) {
-        var lblCostumes = (ct) ? ct.getUILabel('Costumes', currentLang) : 'Costumes';
-        html += '<div class="costumes-section-v2"><div class="detail-section-title">' + esc(lblCostumes) + '</div><div class="costumes-grid-v2">';
-        costumesArr.forEach(function(c) {
-          var nameEn = (typeof c === 'string') ? c : (c.name || '');
-          var img = (typeof c === 'object' && c.image) ? c.image : '';
-          /* Translate costume name */
-          var displayName = nameEn;
-          if (ct && currentLang === 'th') {
-            displayName = ct.getCostumeName(nameEn, 'th');
-          }
-          if (img) {
-            html += '<div class="costume-card-v2 has-image"><img src="'+esc(img)+'" alt="'+esc(displayName)+'" class="costume-card-img" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'\'"><div class="costume-icon" style="display:none;">&#128090;</div><p>' + esc(displayName) + '</p></div>';
-          } else {
-            html += '<div class="costume-card-v2"><div class="costume-icon">&#128090;</div><p>' + esc(displayName) + '</p></div>';
-          }
-        });
-        html += '</div></div>';
-      }
+      /* Costumes section removed from here — now rendered in renderPage via buildCostumesSection */
 
       document.getElementById('weaponContent').innerHTML = html;
     }

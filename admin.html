@@ -46,6 +46,16 @@
     .costume-item-cms{display:flex;gap:8px;align-items:center;margin-bottom:8px}
     .costume-item-cms input{flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--dark3);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:13px}
     .costume-item-cms input:focus{outline:none;border-color:var(--gold)}
+    .costume-item-cms-v2{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
+    .costume-item-row1{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .costume-item-row1 input[type="text"]{padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--dark3);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:13px}
+    .costume-item-row1 input[type="text"]:focus{outline:none;border-color:var(--gold)}
+    .costume-item-row2{margin-top:8px}
+    .costume-item-row2 textarea{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--dark3);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:13px;resize:vertical;box-sizing:border-box}
+    .costume-item-row2 textarea:focus{outline:none;border-color:var(--gold)}
+    .material-item-cms{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+    .material-item-cms input[type="text"]{padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--dark3);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:13px}
+    .material-item-cms input[type="text"]:focus{outline:none;border-color:var(--gold)}
     .step-indicator{display:flex;justify-content:center;gap:0;margin-bottom:32px;flex-wrap:wrap}
     .step-item{display:flex;align-items:center}
     .step-item:last-child .step-line{display:none}
@@ -326,7 +336,8 @@
               <div class="step-item"><div class="step-wrapper"><div class="step-circle" onclick="scrollToSection('sec-weapons')">2</div><div class="step-label">Weapons</div></div><div class="step-line"></div></div>
               <div class="step-item"><div class="step-wrapper"><div class="step-circle" onclick="scrollToSection('sec-skills')">3</div><div class="step-label">Skills</div></div><div class="step-line"></div></div>
               <div class="step-item"><div class="step-wrapper"><div class="step-circle" onclick="scrollToSection('sec-potentials')">4</div><div class="step-label">Potentials</div></div><div class="step-line"></div></div>
-              <div class="step-item"><div class="step-wrapper"><div class="step-circle" onclick="scrollToSection('sec-costumes')">5</div><div class="step-label">Costumes</div></div></div>
+              <div class="step-item"><div class="step-wrapper"><div class="step-circle" onclick="scrollToSection('sec-costumes')">5</div><div class="step-label">Costumes</div></div><div class="step-line"></div></div>
+              <div class="step-item"><div class="step-wrapper"><div class="step-circle" onclick="scrollToSection('sec-materials')">6</div><div class="step-label">Materials</div></div></div>
             </div>
 
             <!-- SECTION 1 -->
@@ -383,12 +394,23 @@
               </div>
             </div>
 
-            <!-- SECTION 5 -->
+            <!-- SECTION 5: COSTUMES (Enhanced) -->
             <div class="cms-section" id="sec-costumes">
               <div class="cms-section-header"><div class="cms-section-num">5</div><h3>Costumes</h3></div>
               <div class="cms-section-body">
+                <p class="form-hint">Add costumes with name, image, and optional description (supports <b>bold</b> using **text**)</p>
                 <div id="costumesEditor"></div>
                 <button type="button" class="btn-add-item" onclick="addCostumeField()" style="margin-top:12px;">+ Add Costume</button>
+              </div>
+            </div>
+
+            <!-- SECTION 6: MATERIALS -->
+            <div class="cms-section" id="sec-materials">
+              <div class="cms-section-header"><div class="cms-section-num">6</div><h3>Upgrade Materials</h3></div>
+              <div class="cms-section-body">
+                <p class="form-hint">Add upgrade materials with name and icon image</p>
+                <div id="materialsEditor"></div>
+                <button type="button" class="btn-add-item" onclick="addMaterialField()" style="margin-top:12px;">+ Add Material</button>
               </div>
             </div>
           </div>
@@ -1222,6 +1244,7 @@ function filterWeaponList(){
       document.getElementById('skillsEditor').innerHTML='';
       document.getElementById('potentialsEditor').innerHTML='';
       document.getElementById('costumesEditor').innerHTML='';
+      document.getElementById('materialsEditor').innerHTML='';
       document.getElementById('weaponSkillsTabs').innerHTML='';
       document.getElementById('weaponPotentialsTabs').innerHTML='';
       document.getElementById('formOverlay').style.display='flex';
@@ -1244,17 +1267,19 @@ function filterWeaponList(){
       tempPotentials=JSON.parse(JSON.stringify(c.potentials||{}));
       buildWeaponToggles(c.types||[]);
       updateSkillsTabs();updatePotentialsTabs();
-      var ch='';(c.costumes||[]).forEach(cos=>{
+      document.getElementById('costumesEditor').innerHTML='';
+      (c.costumes||[]).forEach(cos=>{
         var n=(typeof cos==='string')?cos:(cos.name||'');
         var img=(typeof cos==='object'&&cos.image)?cos.image:'';
-        ch+='<div class="costume-item-cms" style="flex-wrap:wrap;">'+
-          '<input type="text" class="costume-input" value="'+n.replace(/"/g,'&quot;')+'" placeholder="Costume name" style="flex:1;min-width:120px;">'+
-          '<label style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:var(--dark3);color:var(--muted);font-size:12px;cursor:pointer;">'+
-          '<input type="file" accept="image/*" class="costume-image-input" style="display:none;" onchange="previewCostumeImg(this)">&#128247; Image</label>'+
-          '<img class="costume-thumb" src="'+(img||'')+'" style="width:40px;height:40px;border-radius:6px;object-fit:cover;'+(img?'':'display:none;')+'">'+
-          '<button class="btn-remove-item" onclick="this.parentElement.remove();">&times;</button></div>';
+        var desc=(typeof cos==='object'&&cos.description)?cos.description:'';
+        addCostumeField(n,img,desc);
       });
-      document.getElementById('costumesEditor').innerHTML=ch;
+      document.getElementById('materialsEditor').innerHTML='';
+      (c.materials||[]).forEach(mat=>{
+        var n=(typeof mat==='object')?mat.name||'':'';
+        var img=(typeof mat==='object')?mat.image||'':'';
+        addMaterialField(n,img);
+      });
       document.getElementById('formOverlay').style.display='flex';
       document.body.style.overflow='hidden';
     }
@@ -1316,17 +1341,52 @@ function filterWeaponList(){
     }
     function updatePotField(w,k,v){if(!tempPotentials[w])tempPotentials[w]={};tempPotentials[w][k]=v}
 
-    /* ── Costumes ── */
-    function addCostumeField(){
-      var d=document.createElement('div');d.className='costume-item-cms';d.style.flexWrap='wrap';
-      d.innerHTML='<input type="text" class="costume-input" placeholder="Costume name" style="flex:1;min-width:120px;">'+
+    /* ── Costumes (Enhanced with description) ── */
+    function addCostumeField(name,image,desc){
+      var d=document.createElement('div');d.className='costume-item-cms-v2';
+      d.innerHTML='<div class="costume-item-row1">'+
+        '<input type="text" class="costume-input" value="'+(name||'').replace(/"/g,'&quot;')+'" placeholder="Costume name" style="flex:1;min-width:120px;">'+
         '<label style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:var(--dark3);color:var(--muted);font-size:12px;cursor:pointer;">'+
         '<input type="file" accept="image/*" class="costume-image-input" style="display:none;" onchange="previewCostumeImg(this)">&#128247; Image</label>'+
-        '<img class="costume-thumb" style="width:40px;height:40px;border-radius:6px;object-fit:cover;display:none;">'+
-        '<button class="btn-remove-item" onclick="this.parentElement.remove();">&times;</button>';
+        '<input type="text" class="costume-image-url" value="'+(image||'').replace(/"/g,'&quot;')+'" placeholder="or paste image URL" style="flex:1;min-width:120px;">'+
+        '<img class="costume-thumb" src="'+(image||'')+'" style="width:40px;height:40px;border-radius:6px;object-fit:cover;'+(image?'':'display:none;')+'">'+
+        '<button class="btn-remove-item" onclick="this.closest(\'.costume-item-cms-v2\').remove();">&times;</button></div>'+
+        '<div class="costume-item-row2">'+
+        '<textarea class="costume-desc" rows="2" placeholder="Description (optional, use **bold** for emphasis)">'+(desc||'')+'</textarea></div>';
       document.getElementById('costumesEditor').appendChild(d);
     }
-    function previewCostumeImg(inp){if(inp.files&&inp.files[0]){var r=new FileReader();r.onload=function(e){var th=inp.closest('.costume-item-cms').querySelector('.costume-thumb');th.src=e.target.result;th.style.display=''};r.readAsDataURL(inp.files[0])}}
+    function previewCostumeImg(inp){
+      if(inp.files&&inp.files[0]){
+        var r=new FileReader();
+        r.onload=function(e){
+          var card=inp.closest('.costume-item-cms-v2');
+          var th=card.querySelector('.costume-thumb');th.src=e.target.result;th.style.display='';
+          card.querySelector('.costume-image-url').value='';
+        };r.readAsDataURL(inp.files[0]);
+      }
+    }
+
+    /* ── Materials Editor ── */
+    function addMaterialField(name,image){
+      var d=document.createElement('div');d.className='material-item-cms';
+      d.innerHTML='<input type="text" class="material-input" value="'+(name||'').replace(/"/g,'&quot;')+'" placeholder="Material name" style="flex:1;min-width:120px;">'+
+        '<label style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:var(--dark3);color:var(--muted);font-size:12px;cursor:pointer;">'+
+        '<input type="file" accept="image/*" class="material-image-input" style="display:none;" onchange="previewMaterialImg(this)">&#128247; Icon</label>'+
+        '<input type="text" class="material-image-url" value="'+(image||'').replace(/"/g,'&quot;')+'" placeholder="or paste icon URL" style="flex:1;min-width:100px;">'+
+        '<img class="material-thumb" src="'+(image||'')+'" style="width:32px;height:32px;border-radius:6px;object-fit:cover;'+(image?'':'display:none;')+'">'+
+        '<button class="btn-remove-item" onclick="this.parentElement.remove();">&times;</button>';
+      document.getElementById('materialsEditor').appendChild(d);
+    }
+    function previewMaterialImg(inp){
+      if(inp.files&&inp.files[0]){
+        var r=new FileReader();
+        r.onload=function(e){
+          var card=inp.closest('.material-item-cms');
+          var th=card.querySelector('.material-thumb');th.src=e.target.result;th.style.display='';
+          card.querySelector('.material-image-url').value='';
+        };r.readAsDataURL(inp.files[0]);
+      }
+    }
 
     /* ── Image Upload ── */
     function handleImageUpload(input){
@@ -1349,8 +1409,44 @@ function filterWeaponList(){
         var slug=document.getElementById('charSlug').value.trim();
         if(!slug)slug=name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
         var types=getSelectedWeapons();
-        var costumes=[];document.querySelectorAll('.costume-input').forEach(i=>{if(i.value.trim())costumes.push({name:i.value.trim()})});
-        var charData={name_en:name,slug:slug,rarity:document.getElementById('charRarity').value,tier:document.getElementById('charTier').value,description:document.getElementById('charDesc').value,types:types,skills:tempSkills,potentials:tempPotentials,costumes:costumes};
+        /* Collect costumes with image URL and description */
+        var costumes=[];var costumeCards=document.querySelectorAll('.costume-item-cms-v2');
+        for(var ci=0;ci<costumeCards.length;ci++){
+          var card=costumeCards[ci];
+          var n=card.querySelector('.costume-input').value.trim();
+          if(!n)continue;
+          var imgUrl=card.querySelector('.costume-image-url').value.trim();
+          var imgFile=card.querySelector('.costume-image-input').files[0];
+          var img=imgUrl;
+          /* Upload file if selected and connected */
+          if(imgFile&&SupaDB.isConnected()){
+            try{var cUpload=await SupaDB.uploadCostumeImage(imgFile,slug,ci);if(!cUpload.error&&cUpload.url)img=cUpload.url;}catch(ce){console.warn('Costume image upload failed:',ce);}
+          }
+          if(!img){var imgThumb=card.querySelector('.costume-thumb');if(imgThumb&&imgThumb.style.display!=='none'&&imgThumb.src&&!imgThumb.src.startsWith('data:'))img=imgThumb.src;}
+          var desc=card.querySelector('.costume-desc').value.trim();
+          var obj={name:n};
+          if(img)obj.image=img;
+          if(desc)obj.description=desc;
+          costumes.push(obj);
+        }
+        /* Collect materials */
+        var materials=[];var materialCards=document.querySelectorAll('.material-item-cms');
+        for(var mi=0;mi<materialCards.length;mi++){
+          var mcard=materialCards[mi];
+          var mn=mcard.querySelector('.material-input').value.trim();
+          if(!mn)continue;
+          var mImgUrl=mcard.querySelector('.material-image-url').value.trim();
+          var mImgFile=mcard.querySelector('.material-image-input').files[0];
+          var mImg=mImgUrl;
+          if(mImgFile&&SupaDB.isConnected()){
+            try{var mUpload=await SupaDB.uploadMaterialImage(mImgFile,slug,mi);if(!mUpload.error&&mUpload.url)mImg=mUpload.url;}catch(me){console.warn('Material image upload failed:',me);}
+          }
+          if(!mImg){var mThumb=mcard.querySelector('.material-thumb');if(mThumb&&mThumb.style.display!=='none'&&mThumb.src&&!mThumb.src.startsWith('data:'))mImg=mThumb.src;}
+          var mObj={name:mn};
+          if(mImg)mObj.image=mImg;
+          materials.push(mObj);
+        }
+        var charData={name_en:name,slug:slug,rarity:document.getElementById('charRarity').value,tier:document.getElementById('charTier').value,description:document.getElementById('charDesc').value,types:types,skills:tempSkills,potentials:tempPotentials,costumes:costumes,materials:materials};
         if(tempImageFile&&SupaDB.isConnected()){
           try{var upload=await SupaDB.uploadImage(tempImageFile,slug);if(!upload.error&&upload.url)charData.image=upload.url}catch(ue){console.warn('Image upload failed:',ue)}
         }else if(editingId){var ex=allCharacters.find(x=>x.id===editingId);if(ex)charData.image=ex.image||null}
