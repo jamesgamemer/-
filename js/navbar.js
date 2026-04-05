@@ -1,15 +1,17 @@
 /* ============================================================
-   NAVBAR SYSTEM (v2 - Separate Admin/User Auth)
+   NAVBAR SYSTEM v3 — Premium Global Navigation
+   Dynamically ensures a consistent navbar across ALL pages.
    ============================================================ */
 
-/* NAV MAP */
+/* NAV MAP — all main pages */
 const navMap = {
-  'index.html': { icon: '🏠', key: 'nav_home' },
-  'characters.html': { icon: '⚔', key: 'nav_characters' },
-  'weapons.html': { icon: '🗡', key: 'nav_weapons' },
-  'tierlist.html': { icon: '🏆', key: 'nav_tierlist' },
-  'events.html': { icon: '🎉', key: 'nav_events' },
-  'guides.html': { icon: '📘', key: 'nav_guides' }
+  'index.html': { icon: '🏠', key: 'nav_home', label: 'Home' },
+  'characters.html': { icon: '⚔', key: 'nav_characters', label: 'Characters' },
+  'weapons.html': { icon: '🗡', key: 'nav_weapons', label: 'Weapons' },
+  'tierlist.html': { icon: '🏆', key: 'nav_tierlist', label: 'Tier List' },
+  'events.html': { icon: '🎉', key: 'nav_events', label: 'Events' },
+  'guides.html': { icon: '📘', key: 'nav_guides', label: 'Guides' },
+  'team-builder.html': { icon: '⚙', key: 'nav_teambuilder', label: 'Team Builder' }
 };
 
 
@@ -21,6 +23,9 @@ function initNavbar(){
 
 if(window._navbarInitDone) return;
 window._navbarInitDone = true;
+
+/* Ensure all nav links exist */
+ensureNavbar();
 
 /* render menu */
 renderNavbar();
@@ -34,6 +39,9 @@ injectAuthUI();
 /* hamburger */
 setupHamburger();
 
+/* scroll effect */
+setupScrollEffect();
+
 /* apply translation */
 applyNavI18n();
 
@@ -44,6 +52,68 @@ if(typeof I18n !== 'undefined'){
   });
 }
 
+}
+
+
+/* ============================================================
+   ENSURE NAVBAR — inject missing links, fix active states
+   ============================================================ */
+
+function ensureNavbar(){
+  var nav = document.querySelector('nav.navbar');
+  if(!nav) return;
+  var ul = nav.querySelector('#navLinks');
+  if(!ul) return;
+  var currentPage = _getCurrentPage();
+  var existingHrefs = {};
+  ul.querySelectorAll('li > a').forEach(function(a){
+    var href = a.getAttribute('href');
+    if(href) existingHrefs[href.split('/').pop()] = a;
+  });
+  Object.keys(navMap).forEach(function(page){
+    if(!existingHrefs[page]){
+      var li = document.createElement('li');
+      var a = document.createElement('a');
+      a.href = page;
+      a.textContent = navMap[page].label;
+      if(page === currentPage) a.classList.add('active');
+      li.appendChild(a);
+      var langItem = ul.querySelector('.nav-lang-switcher');
+      var authItem = ul.querySelector('.nav-auth-item');
+      var insertBefore = langItem || authItem || null;
+      ul.insertBefore(li, insertBefore);
+    }
+  });
+  ul.querySelectorAll('li > a').forEach(function(a){
+    var href = a.getAttribute('href');
+    if(!href) return;
+    var page = href.split('/').pop();
+    if(page === currentPage){ a.classList.add('active'); }
+    else { a.classList.remove('active'); }
+  });
+}
+
+function _getCurrentPage(){
+  var path = window.location.pathname;
+  var page = path.split('/').pop() || 'index.html';
+  if(page === '' || page === '/') page = 'index.html';
+  return page;
+}
+
+
+/* ============================================================
+   SCROLL EFFECT
+   ============================================================ */
+
+function setupScrollEffect(){
+  var nav = document.querySelector('.navbar');
+  if(!nav) return;
+  function checkScroll(){
+    if(window.scrollY > 20){ nav.classList.add('navbar-scrolled'); }
+    else { nav.classList.remove('navbar-scrolled'); }
+  }
+  window.addEventListener('scroll', checkScroll, { passive: true });
+  checkScroll();
 }
 
 
@@ -70,7 +140,7 @@ icon.innerHTML=mapping.icon;
 
 var text=document.createElement("span");
 text.className="nav-text";
-text.textContent=getLabel(mapping.key);
+text.textContent=getLabel(mapping.key) || mapping.label;
 
 a.appendChild(icon);
 a.appendChild(document.createTextNode(' '));
@@ -99,7 +169,7 @@ if(!mapping) return;
 var text=a.querySelector('.nav-text');
 
 if(text){
-text.textContent=getLabel(mapping.key);
+text.textContent=getLabel(mapping.key) || mapping.label;
 }
 
 });
@@ -165,6 +235,16 @@ var links=document.getElementById('navLinks');
 if(ham&&links){
 ham.addEventListener('click',function(){
 links.classList.toggle('open');
+ham.classList.toggle('active');
+});
+/* Close menu when clicking a link on mobile */
+links.querySelectorAll('a').forEach(function(a){
+  a.addEventListener('click', function(){
+    if(window.innerWidth <= 768){
+      links.classList.remove('open');
+      ham.classList.remove('active');
+    }
+  });
 });
 }
 
@@ -173,13 +253,6 @@ links.classList.toggle('open');
 
 /* ============================================================
    AUTH MENU (v2 - Separate Admin and User)
-   
-   Logic:
-   1. Check if user is ADMIN (email/password + in ADMIN_EMAILS)
-      -> Show admin avatar with admin menu (Dashboard, Logout)
-   2. Else check if user is logged in via UserAuth (Google/Discord/Email)
-      -> Show user avatar with user menu (Profile info, Sign Out)
-   3. Else show Login button (for admin) + Sign In text
    ============================================================ */
 
 async function injectAuthUI(){
@@ -190,7 +263,7 @@ if(!navLinks||navLinks.querySelector('.nav-auth-item')) return;
 var li=document.createElement('li');
 li.className='nav-auth-item';
 
-/* ── Step 1: Check Admin ── */
+/* Step 1: Check Admin */
 var isAdmin=false;
 var adminEmail='';
 
@@ -212,7 +285,6 @@ if(typeof Auth!=='undefined'){
 }
 
 if(isAdmin){
-  /* Admin UI: show admin avatar + admin menu */
   var initial=adminEmail?adminEmail.charAt(0).toUpperCase():'A';
 
   li.innerHTML=
@@ -239,15 +311,13 @@ if(isAdmin){
   return;
 }
 
-/* ── Step 2: Check User Auth (Google/Discord/Email signup) ── */
+/* Step 2: Check User Auth */
 var isUser=false;
 var userName='';
 var userAvatar='';
 
 if(typeof UserAuth!=='undefined'){
   try{
-    /* UserAuth might not be initialized yet on non-team-builder pages */
-    /* Initialize it if Supabase is connected */
     if(typeof SupaDB!=='undefined' && SupaDB.isConnected()){
       await UserAuth.init();
     }
@@ -262,7 +332,6 @@ if(typeof UserAuth!=='undefined'){
 }
 
 if(isUser){
-  /* User UI: show user avatar + user menu */
   var avatarHtml;
   if(userAvatar){
     avatarHtml='<img class="nav-profile-avatar nav-user-avatar" id="profileAvatarBtn" src="'+escNavHtml(userAvatar)+'" alt="'+escNavHtml(userName)+'" title="'+escNavHtml(userName)+'">';
@@ -288,7 +357,6 @@ if(isUser){
   navLinks.appendChild(li);
   _bindProfileMenu();
 
-  /* Bind user logout */
   var logoutBtn=document.getElementById('navUserLogout');
   if(logoutBtn){
     logoutBtn.addEventListener('click', async function(){
@@ -301,7 +369,7 @@ if(isUser){
   return;
 }
 
-/* ── Step 3: Not logged in - Show Login button ── */
+/* Step 3: Not logged in */
 li.innerHTML=
 '<a href="login.html" class="nav-login-btn">'+
 '<span class="nav-login-icon">&#128274;</span> Login'+
@@ -311,7 +379,7 @@ navLinks.appendChild(li);
 
 }
 
-/* ── Bind profile menu toggle ── */
+/* Bind profile menu toggle */
 function _bindProfileMenu(){
 var avatar=document.getElementById('profileAvatarBtn');
 var menu=document.getElementById('profileMenu');
@@ -335,23 +403,18 @@ document.addEventListener('click',function(e){
    ============================================================ */
 
 function getLabel(key){
-
 if(typeof I18n!=='undefined'){
-return I18n.t(key);
+  var val = I18n.t(key);
+  if(val && val !== key) return val;
 }
-
-return key;
-
+return '';
 }
 
 function getLang(){
-
 if(typeof I18n!=='undefined'){
 return I18n.getLang();
 }
-
 return 'en';
-
 }
 
 function escNavHtml(str){
