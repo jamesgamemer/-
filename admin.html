@@ -1535,7 +1535,11 @@ function filterWeaponList(){
           if(imgFile&&SupaDB.isConnected()){
             try{var cUpload=await SupaDB.uploadCostumeImage(imgFile,slug,ci);if(!cUpload.error&&cUpload.url)img=cUpload.url;}catch(ce){console.warn('Costume image upload failed:',ce);}
           }
-          if(!img){var imgThumb=card.querySelector('.costume-thumb');if(imgThumb&&imgThumb.style.display!=='none'&&imgThumb.src&&!imgThumb.src.startsWith('data:'))img=imgThumb.src;}
+          /* Fallback: if file was selected but upload failed or not connected, read as data URL */
+          if(!img&&imgFile){
+            try{img=await new Promise(function(resolve,reject){var fr=new FileReader();fr.onload=function(e){resolve(e.target.result)};fr.onerror=reject;fr.readAsDataURL(imgFile)});}catch(fe){console.warn('Costume file read failed:',fe);}
+          }
+          if(!img){var imgThumb=card.querySelector('.costume-thumb');if(imgThumb&&imgThumb.style.display!=='none'&&imgThumb.src)img=imgThumb.src;}
           var desc=(card.getAttribute('data-desc-html')||'').trim();
           var obj={name:n};
           if(img)obj.image=img;
@@ -1554,7 +1558,11 @@ function filterWeaponList(){
           if(mImgFile&&SupaDB.isConnected()){
             try{var mUpload=await SupaDB.uploadMaterialImage(mImgFile,slug,mi);if(!mUpload.error&&mUpload.url)mImg=mUpload.url;}catch(me){console.warn('Material image upload failed:',me);}
           }
-          if(!mImg){var mThumb=mcard.querySelector('.material-thumb');if(mThumb&&mThumb.style.display!=='none'&&mThumb.src&&!mThumb.src.startsWith('data:'))mImg=mThumb.src;}
+          /* Fallback: if file was selected but upload failed or not connected, read as data URL */
+          if(!mImg&&mImgFile){
+            try{mImg=await new Promise(function(resolve,reject){var fr=new FileReader();fr.onload=function(e){resolve(e.target.result)};fr.onerror=reject;fr.readAsDataURL(mImgFile)});}catch(fe){console.warn('Material file read failed:',fe);}
+          }
+          if(!mImg){var mThumb=mcard.querySelector('.material-thumb');if(mThumb&&mThumb.style.display!=='none'&&mThumb.src)mImg=mThumb.src;}
           var mObj={name:mn};
           if(mImg)mObj.image=mImg;
           materials.push(mObj);

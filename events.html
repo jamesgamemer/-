@@ -559,7 +559,8 @@
         var statusCls = 'status-' + ev.status;
         var tagCls = 'tag-' + (ev.tag || 'event');
         var tagLabel = (ev.tag || 'event').charAt(0).toUpperCase() + (ev.tag || 'event').slice(1);
-        var rewardTags = (ev.rewards || []).map(function(r){ return '<span class="reward-tag">'+escHtml(r)+'</span>'; }).join('');
+        var safeRewards = Array.isArray(ev.rewards) ? ev.rewards : [];
+        var rewardTags = safeRewards.map(function(r){ return '<span class="reward-tag">'+escHtml(typeof r === 'string' ? r : String(r))+'</span>'; }).join('');
 
         var adminBtns = '';
         if (isAdmin) {
@@ -682,7 +683,7 @@
           document.getElementById('efmImagePrompt').style.display = '';
         }
         var rh = '';
-        (ev.rewards || []).forEach(function(r) {
+        (Array.isArray(ev.rewards) ? ev.rewards : []).forEach(function(r) {
           rh += '<div class="reward-item"><input type="text" class="efm-reward-input" value="'+r.replace(/"/g,'&quot;')+'"><button class="reward-remove" onclick="this.parentElement.remove();">&times;</button></div>';
         });
         document.getElementById('efmRewardsEditor').innerHTML = rh;

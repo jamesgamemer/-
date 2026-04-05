@@ -16,6 +16,24 @@ var EventDB = (function () {
     return _useSupabase;
   }
 
+  /* ── Helper: safely parse rewards ── */
+  function _parseRewards(raw) {
+    if (Array.isArray(raw)) return raw;
+    if (typeof raw === 'string') {
+      try {
+        var parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed;
+      } catch(e) {
+        if (raw.trim()) return [raw];
+      }
+    }
+    if (raw && typeof raw === 'object') {
+      // If it's an object but not array, try to extract values
+      try { return Object.values(raw); } catch(e) {}
+    }
+    return [];
+  }
+
   /* ── Supabase Operations ── */
   async function fetchAll() {
     if (_useSupabase) {
@@ -148,53 +166,67 @@ var EventDB = (function () {
   }
 
   /* ── Field Mapping ── */
- function _mapFromSupabase(row) {
-  return {
-    id: row.id,
-    title: row.title_en || row.title_th || '',
-    desc: row.description_en || row.description_th || '',
-    status: row.status || 'active',
-    tag: row.event_type || 'event',
-    start: row.start_date || '',
-    end: row.end_date || '',
-    color: row.color || 'linear-gradient(90deg,#3b82f6,#60a5fa)',
-    image: row.image || '',
-    rewards: row.rewards || [],
-    created_at: row.created_at
-  };
-}
+  function _mapFromSupabase(row) {
+    return {
+      id: row.id,
+      title: row.title_en || row.title || row.title_th || '',
+      desc: row.description_en || row.description || row.description_th || '',
+      status: row.status || 'active',
+      tag: row.event_type || 'event',
+      start: row.start_date || '',
+      end: row.end_date || '',
+      color: row.color || 'linear-gradient(90deg,#3b82f6,#60a5fa)',
+      image: row.image || '',
+      rewards: _parseRewards(row.rewards),
+      created_at: row.created_at
+    };
+  }
 
   function _mapToSupabase(ev) {
-  return {
-    title_en: ev.title || '',
-    description_en: ev.desc || '',
-    status: ev.status || 'active',
-    event_type: ev.tag || 'event',
-    start_date: ev.start || null,
-    end_date: ev.end || null,
-    color: ev.color || 'linear-gradient(90deg,#3b82f6,#60a5fa)',
-    image: ev.image || '',
-    rewards: ev.rewards || []
-  };
-}
+    /* Ensure rewards is always a proper array */
+    var rewardsArr = _parseRewards(ev.rewards);
+    return {
+      title: ev.title || '',
+      description: ev.desc || '',
+      status: ev.status || 'active',
+      event_type: ev.tag || 'event',
+      start_date: ev.start || null,
+      end_date: ev.end || null,
+      color: ev.color || 'linear-gradient(90deg,#3b82f6,#60a5fa)',
+      image: ev.image || '',
+      rewards: rewardsArr
+    };
+  }
 
   /* ── localStorage Fallback ── */
   function _localFetchAll() {
     var stored = localStorage.getItem('7ds_events');
     if (stored) {
-      try { return JSON.parse(stored); } catch(e) {}
+      try {
+        var parsed = JSON.parse(stored);
+        /* Normalize rewards for each event */
+        if (Array.isArray(parsed)) {
+          parsed.forEach(function(ev) {
+            ev.rewards = _parseRewards(ev.rewards);
+          });
+        }
+        return parsed;
+      } catch(e) {}
     }
     return _getDefaults();
   }
 
   function _localFindById(id) {
     var all = _localFetchAll();
-    return all.find(function(e) { return e.id == id; }) || null;
+    var found = all.find(function(e) { return e.id == id; }) || null;
+    if (found) found.rewards = _parseRewards(found.rewards);
+    return found;
   }
 
   function _localAdd(eventData) {
     var all = _localFetchAll();
     eventData.id = Date.now();
+    eventData.rewards = _parseRewards(eventData.rewards);
     all.push(eventData);
     localStorage.setItem('7ds_events', JSON.stringify(all));
     return { data: eventData, error: null };
@@ -205,6 +237,7 @@ var EventDB = (function () {
     var idx = all.findIndex(function(e) { return e.id == id; });
     if (idx !== -1) {
       eventData.id = id;
+      eventData.rewards = _parseRewards(eventData.rewards);
       all[idx] = eventData;
       localStorage.setItem('7ds_events', JSON.stringify(all));
       return { data: eventData, error: null };

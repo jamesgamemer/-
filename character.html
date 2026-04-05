@@ -550,7 +550,7 @@
         html += '<div class="costume-card-v3">';
         if (img) {
           html += '<div class="costume-card-img-wrap">';
-          html += '<img src="' + esc(img) + '" alt="' + esc(displayName) + '" class="costume-card-portrait" onerror="this.style.display=\'none\'">';
+          html += '<img src="' + img.replace(/"/g, '&quot;') + '" alt="' + esc(displayName) + '" class="costume-card-portrait" onerror="this.parentElement.classList.add(\'costume-card-placeholder\');this.parentElement.innerHTML=\'<span>&#128090;</span>\';">';
           html += '</div>';
         } else {
           html += '<div class="costume-card-img-wrap costume-card-placeholder"><span>&#128090;</span></div>';

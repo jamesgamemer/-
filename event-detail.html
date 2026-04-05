@@ -324,11 +324,12 @@
 
       /* Rewards */
       var rewardsHTML = '';
-      if (ev.rewards && ev.rewards.length > 0) {
+      var safeRewards = Array.isArray(ev.rewards) ? ev.rewards : [];
+      if (safeRewards.length > 0) {
         rewardsHTML = '<div class="ed-section">'
           + '<div class="ed-section-title" data-i18n="form_rewards">Rewards</div>'
           + '<div class="ed-rewards-grid">'
-          + ev.rewards.map(function(r) { return '<div class="ed-reward-item">' + escHtml(r) + '</div>'; }).join('')
+          + safeRewards.map(function(r) { return '<div class="ed-reward-item">' + escHtml(typeof r === 'string' ? r : String(r)) + '</div>'; }).join('')
           + '</div></div>';
       }
 
