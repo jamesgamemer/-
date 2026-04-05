@@ -1,0 +1,346 @@
+/* ============================================================
+   7DS ORIGIN — PREMIUM GLOBAL DESIGN SYSTEM v3
+   Consistent design language across all pages.
+   Loaded after style.css and premium-nav.css.
+   ============================================================ */
+
+/* ── Enhanced CSS Variables ── */
+:root {
+  --premium-radius: 14px;
+  --premium-radius-sm: 10px;
+  --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --card-shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 12px rgba(240, 192, 64, 0.06);
+  --glass-bg: rgba(11, 16, 32, 0.95);
+  --glass-border: rgba(148, 163, 184, 0.08);
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Body: Subtle background texture ── */
+body {
+  background-color: #020617;
+  background-image:
+    radial-gradient(ellipse at 20% 0%, rgba(96, 165, 250, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(240, 192, 64, 0.02) 0%, transparent 50%);
+  min-height: 100vh;
+}
+
+/* ── Page Headers: Consistent premium treatment ── */
+.page-header {
+  background: linear-gradient(180deg, #0a1a3e 0%, #060e24 60%, var(--dark2) 100%);
+  padding: 72px 20px 48px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(240, 192, 64, 0.08);
+}
+
+.page-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(96, 165, 250, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(96, 165, 250, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+
+.page-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.page-header h1 {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(28px, 5vw, 48px);
+  font-weight: 900;
+  background: linear-gradient(135deg, #f0c040, #ffd866, #f0c040);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 2px 12px rgba(240, 192, 64, 0.3));
+  letter-spacing: 3px;
+  position: relative;
+  z-index: 1;
+  margin: 0;
+}
+
+.page-header p,
+.page-header .subtitle {
+  color: rgba(148, 163, 184, 0.7);
+  font-size: 14px;
+  letter-spacing: 2px;
+  margin-top: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Container: Consistent max-width ── */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ── Card System: Unified card styling ── */
+.char-card,
+.event-card,
+.guide-card,
+.weapon-card {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(11, 16, 32, 0.9));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--premium-radius);
+  overflow: hidden;
+  transition: var(--transition-smooth);
+  box-shadow: var(--card-shadow);
+}
+
+.char-card:hover,
+.event-card:hover,
+.guide-card:hover,
+.weapon-card:hover {
+  border-color: rgba(240, 192, 64, 0.3);
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-4px);
+}
+
+/* ── Character Cards: Premium upgrade ── */
+.char-card {
+  border-radius: var(--premium-radius-sm);
+}
+
+.char-card img {
+  transition: transform 0.3s;
+}
+
+.char-card:hover img {
+  transform: scale(1.05);
+}
+
+.char-name {
+  font-size: 12px;
+  padding: 8px 6px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.char-rarity {
+  font-size: 10px;
+  padding: 4px 6px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+/* ── Tier List: Premium tier rows ── */
+.tier {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.7), rgba(11, 16, 32, 0.8));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--premium-radius-sm);
+  padding: 12px 18px;
+  margin-bottom: 14px;
+  transition: var(--transition-smooth);
+}
+
+.tier:hover {
+  border-color: rgba(240, 192, 64, 0.15);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.tier h2 {
+  font-size: 24px;
+  text-shadow: 0 0 12px currentColor;
+}
+
+/* ── Buttons: Premium button system ── */
+.btn, .btn-gold, .btn-outline, .btn-blue {
+  border-radius: var(--premium-radius-sm);
+  font-weight: 700;
+  letter-spacing: 1px;
+  transition: var(--transition-smooth);
+}
+
+.btn-gold {
+  background: linear-gradient(135deg, #b8860b, #f0c040, #daa520);
+  box-shadow: 0 2px 12px rgba(240, 192, 64, 0.25);
+}
+
+.btn-gold:hover {
+  box-shadow: 0 6px 24px rgba(240, 192, 64, 0.4);
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  border: 1px solid rgba(240, 192, 64, 0.3);
+  border-radius: var(--premium-radius-sm);
+}
+
+.btn-outline:hover {
+  background: rgba(240, 192, 64, 0.08);
+  border-color: var(--gold);
+  box-shadow: 0 0 12px rgba(240, 192, 64, 0.1);
+}
+
+.btn-blue {
+  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+  box-shadow: 0 2px 12px rgba(59, 130, 246, 0.25);
+}
+
+.btn-blue:hover {
+  box-shadow: 0 6px 24px rgba(59, 130, 246, 0.4);
+  transform: translateY(-2px);
+}
+
+/* ── Character Detail Page: Premium layout ── */
+.character-card {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(11, 16, 32, 0.9));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--premium-radius);
+  padding: 28px;
+  box-shadow: var(--card-shadow);
+}
+
+.story-card {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.7), rgba(6, 10, 24, 0.8));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--premium-radius);
+  box-shadow: var(--card-shadow);
+}
+
+.story-card h2 {
+  color: var(--blue);
+  border-bottom: 1px solid rgba(96, 165, 250, 0.15);
+  padding-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+/* ── Skill Cards: Premium treatment ── */
+.skill-card {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.7), rgba(11, 16, 32, 0.8));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--premium-radius-sm);
+  padding: 22px;
+  transition: var(--transition-smooth);
+}
+
+.skill-card:hover {
+  border-color: rgba(96, 165, 250, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.skill-card h3 {
+  color: var(--blue);
+  letter-spacing: 0.5px;
+}
+
+/* ── Weapon Tabs: Premium treatment ── */
+.weapon-tabs button {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.6), rgba(11, 16, 32, 0.7));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--premium-radius-sm);
+  padding: 10px 20px;
+  font-size: 14px;
+  transition: var(--transition-smooth);
+}
+
+.weapon-tabs button:hover {
+  border-color: rgba(96, 165, 250, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.weapon-tabs button.active {
+  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+  border-color: transparent;
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+}
+
+/* ── Skeleton Loaders: Smoother animation ── */
+@keyframes skeleton-pulse {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.6) 40%, rgba(15, 23, 42, 0.8) 80%);
+  background-size: 200px 100%;
+  animation: skeleton-pulse 1.8s ease-in-out infinite;
+  border-radius: var(--premium-radius-sm);
+}
+
+.skeleton-card {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--premium-radius);
+}
+
+/* ── Section Titles: Consistent hierarchy ── */
+section h2,
+.section-title {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 2px;
+}
+
+/* ── Links: Consistent hover behavior ── */
+a {
+  transition: color 0.2s, text-shadow 0.2s;
+}
+
+/* ── Premium Focus States ── */
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 12px rgba(240, 192, 64, 0.1);
+}
+
+/* ── Smooth Page Transitions ── */
+.page-content {
+  animation: pageContentFadeIn 0.4s ease;
+}
+
+@keyframes pageContentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Premium Dividers ── */
+hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(240, 192, 64, 0.15), transparent);
+  margin: 32px 0;
+}
+
+/* ── Responsive Enhancements ── */
+@media (max-width: 768px) {
+  .page-header {
+    padding: 64px 16px 36px;
+  }
+
+  .container {
+    padding: 0 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header {
+    padding: 56px 12px 28px;
+  }
+
+  .page-header h1 {
+    letter-spacing: 1px;
+  }
+}

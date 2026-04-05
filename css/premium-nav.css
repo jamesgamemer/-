@@ -1,0 +1,308 @@
+/* ============================================================
+   7DS ORIGIN — PREMIUM NAVIGATION v3
+   Overlays on top of style.css navbar rules.
+   ============================================================ */
+
+/* ── Navbar Base Upgrade ── */
+.navbar {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  height: 64px;
+  background: linear-gradient(180deg, rgba(2, 6, 23, 0.97) 0%, rgba(11, 16, 32, 0.95) 100%);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  border-bottom: 1px solid rgba(240, 192, 64, 0.15);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4), 0 1px 0 rgba(240, 192, 64, 0.06) inset;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Scrolled state — more compact, stronger glass */
+.navbar.navbar-scrolled {
+  height: 56px;
+  background: linear-gradient(180deg, rgba(2, 6, 23, 0.99) 0%, rgba(11, 16, 32, 0.98) 100%);
+  border-bottom-color: rgba(240, 192, 64, 0.25);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(240, 192, 64, 0.1) inset;
+}
+
+/* ── Logo Upgrade ── */
+.navbar-logo {
+  font-family: 'Cinzel', serif;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--gold);
+  text-decoration: none;
+  letter-spacing: 3px;
+  text-shadow: 0 0 24px rgba(240, 192, 64, 0.4), 0 2px 4px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+  position: relative;
+  transition: all 0.3s;
+}
+
+.navbar-logo span {
+  color: var(--blue);
+  text-shadow: 0 0 20px rgba(96, 165, 250, 0.35);
+}
+
+.navbar-logo:hover {
+  text-shadow: 0 0 32px rgba(240, 192, 64, 0.6), 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.navbar.navbar-scrolled .navbar-logo {
+  font-size: 20px;
+}
+
+/* ── Nav Links Upgrade ── */
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+}
+
+.navbar-links > li > a {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 14px;
+  color: rgba(148, 163, 184, 0.9);
+  text-decoration: none;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  border-radius: 8px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  white-space: nowrap;
+}
+
+/* Icon styling */
+.navbar-links > li > a .nav-icon {
+  font-size: 14px;
+  display: inline-block;
+  margin-right: 3px;
+  transition: transform 0.25s;
+}
+
+/* Underline effect */
+.navbar-links > li > a::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  border-radius: 2px;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hover state */
+.navbar-links > li > a:hover {
+  color: var(--gold);
+  background: rgba(240, 192, 64, 0.06);
+}
+
+.navbar-links > li > a:hover .nav-icon {
+  transform: scale(1.15);
+}
+
+.navbar-links > li > a:hover::after {
+  width: 70%;
+}
+
+/* Active state */
+.navbar-links > li > a.active {
+  color: var(--gold);
+  background: rgba(240, 192, 64, 0.08);
+  box-shadow: 0 0 12px rgba(240, 192, 64, 0.08) inset;
+}
+
+.navbar-links > li > a.active::after {
+  width: 80%;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  box-shadow: 0 0 8px rgba(240, 192, 64, 0.4);
+}
+
+/* ── Hamburger Upgrade ── */
+.navbar-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background 0.2s;
+  z-index: 1001;
+}
+
+.navbar-hamburger:hover {
+  background: rgba(240, 192, 64, 0.08);
+}
+
+.navbar-hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--gold);
+  border-radius: 2px;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+}
+
+/* Hamburger active (X) animation */
+.navbar-hamburger.active span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.navbar-hamburger.active span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.navbar-hamburger.active span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ── Mobile Navigation ── */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 20px;
+  }
+
+  .navbar-hamburger {
+    display: flex;
+  }
+
+  .navbar-links {
+    display: none;
+    position: absolute;
+    top: 64px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: linear-gradient(180deg, rgba(2, 6, 23, 0.99) 0%, rgba(11, 16, 32, 0.98) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 12px 0 20px;
+    border-bottom: 1px solid rgba(240, 192, 64, 0.2);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    gap: 0;
+    max-height: calc(100vh - 64px);
+    overflow-y: auto;
+  }
+
+  .navbar.navbar-scrolled + .navbar-links,
+  .navbar.navbar-scrolled .navbar-links {
+    top: 56px;
+  }
+
+  .navbar-links.open {
+    display: flex;
+    animation: navSlideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @keyframes navSlideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .navbar-links > li > a {
+    padding: 14px 32px;
+    border-radius: 0;
+    font-size: 15px;
+    border-bottom: 1px solid rgba(240, 192, 64, 0.04);
+  }
+
+  .navbar-links > li > a::after {
+    display: none;
+  }
+
+  .navbar-links > li > a:hover,
+  .navbar-links > li > a.active {
+    background: rgba(240, 192, 64, 0.08);
+    padding-left: 36px;
+  }
+
+  .navbar-links > li > a.active {
+    border-left: 3px solid var(--gold);
+  }
+}
+
+/* ── Page Content Offset (for sticky nav) ── */
+.page-content {
+  padding-top: 0;
+}
+
+/* ── Premium Footer Upgrade ── */
+.site-footer {
+  text-align: center;
+  padding: 40px 20px 32px;
+  border-top: 1px solid rgba(240, 192, 64, 0.12);
+  background: linear-gradient(180deg, transparent 0%, rgba(2, 6, 23, 0.5) 100%);
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 1px;
+  position: relative;
+}
+
+.site-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.site-footer a {
+  color: var(--gold);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.site-footer a:hover {
+  color: var(--gold2);
+  text-shadow: 0 0 8px rgba(240, 192, 64, 0.3);
+}
+
+/* ── Scrollbar Styling (Global) ── */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(2, 6, 23, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(240, 192, 64, 0.15);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(240, 192, 64, 0.3);
+}
+
+/* ── Selection Color ── */
+::selection {
+  background: rgba(240, 192, 64, 0.25);
+  color: #fff;
+}
